@@ -30,7 +30,7 @@ public class UICard : MonoBehaviour
     {
         nomeTMPRO.text = nomeUI;
         barraVida.value = vidaUI;
-        ataqueTMPRO.text = "ATQ: " + ataqueUI.ToString();
-        resistenciaTMPRO.text = "RES: " + resistenciaUI.ToString();
+        ataqueTMPRO.text = "" + ataqueUI.ToString();
+        resistenciaTMPRO.text = "" + resistenciaUI.ToString();
     }
 }

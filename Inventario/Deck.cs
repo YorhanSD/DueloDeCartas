@@ -7,7 +7,7 @@ public class Deck : MonoBehaviour
     [SerializeField] UICard uiCard;
     [SerializeField] Card card;
 
-    private int contador = 0;
+    public int contador = 0;
 
     public List<Card> geralCardList = new List<Card>();
 
@@ -20,7 +20,6 @@ public class Deck : MonoBehaviour
         geralCardList[contador].vida = _cardVida;
         geralCardList[contador].ataque = _cardAtaque;
         geralCardList[contador].resistencia = _cardResistencia;
-
     }
     public void ImprimirNomes(int _idUI, string _cardNome, int _cardVida, int _cardAtaque, int _cardResistencia)
     {

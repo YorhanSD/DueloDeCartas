@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,20 +9,36 @@ public class Leitor : MonoBehaviour
     [SerializeField] private Deck deck;
     [SerializeField] private SistemaCombate sC;
 
+    public void Start()
+    {
+        deck = FindObjectOfType<Deck>();
+        sC = FindObjectOfType<SistemaCombate>(); 
+    }
+
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.name != null)
+        if(collision.gameObject.tag != null && this.gameObject.tag == "Card Oponente")
         {
-            //Debug.Log("Detectou");
-
-            foreach (Card card1 in deck.geralCardList)
+            foreach (Card card in deck.geralCardList)
             {
-                if (card1.nome == collision.gameObject.name)
+                if (card.nome == collision.gameObject.name && collision.gameObject.tag == "Card Player")
                 {
-                    //Debug.Log($"{card1.nome}");
-                    //Debug.Log($"{gameObject.name}");
+                    //Debug.Log("Carta de Ataque: " + gameObject.name + " Carta de Defesa: " + card.nome);
 
-                    sC.UmContraUm(gameObject.name, card1.nome);
+                    sC.UmContraUm(this.gameObject.name, card.nome);
+                }
+            }
+        }
+        
+        if (collision.gameObject.tag != null && this.gameObject.tag == "Card Player")
+        {
+            foreach (Card card in deck.geralCardList)
+            {
+                if (card.nome == collision.gameObject.name && collision.gameObject.tag == "Card Oponente")
+                {
+                    //Debug.Log("Carta de Ataque: " + gameObject.name + " Carta de Defesa: " + card.nome);
+
+                    sC.UmContraUm(this.gameObject.name, card.nome);
                 }
             }
         }

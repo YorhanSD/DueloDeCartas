@@ -9,6 +9,8 @@ public class TelaPariamento : MonoBehaviour
 {
     public TextMeshProUGUI nome;
 
+    public TextMeshProUGUI pais;
+
     public GameObject[] fotos;
 
     SalvaJogoPC salvaJogoPC;
@@ -21,6 +23,7 @@ public class TelaPariamento : MonoBehaviour
         {
             mudaFoto(salvaJogoPC.PersonagemSalvo().GetPersonagemEscolhido());
             mudaNome(salvaJogoPC.PersonagemSalvo().GetNomePersonagemEscolhido());
+            mudaPais(salvaJogoPC.PersonagemSalvo().GetPais());
         }
         else
         {
@@ -39,6 +42,14 @@ public class TelaPariamento : MonoBehaviour
         if (nome != null)
         {
             nome.text = _nome;
+        }
+    }
+
+    public void mudaPais(string _pais)
+    {
+        if (pais != null)
+        {
+            pais.text = _pais;
         }
     }
 }

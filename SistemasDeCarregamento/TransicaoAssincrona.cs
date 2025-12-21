@@ -7,6 +7,7 @@ using TMPro;
 
 public class TransicaoAssincrona : MonoBehaviour
 {
+    SalvaJogoPC salvaJogoPC;
     public string cena;
     public Slider barraCarregamento;
     public TextMeshProUGUI porcentagemCarregamento;
@@ -14,13 +15,13 @@ public class TransicaoAssincrona : MonoBehaviour
 
     private void Start()
     {
+        salvaJogoPC = GetComponent<SalvaJogoPC>();
         StartCoroutine(CarregamentoAssincrono());
     }
-
     public IEnumerator CarregamentoAssincrono()
     {
         yield return new WaitForSeconds(5f);
-        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(cena);
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(salvaJogoPC.PersonagemSalvo().GetCampanhaPersonagem());
         while (!asyncOperation.isDone) {
             multiplicador = asyncOperation.progress * 100f;
             porcentagemCarregamento.text = multiplicador.ToString() + "%";

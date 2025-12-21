@@ -10,6 +10,10 @@ public class Personagem : MonoBehaviour
 
     public string nome;
 
+    public string campanha;
+
+    public string pais;
+
     public UnityEngine.UI.Image fotoPersonagem;
 
 }

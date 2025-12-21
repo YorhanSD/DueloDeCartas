@@ -8,6 +8,8 @@ public class SalvaEscolhaPersonagem
 {
     private int idPersonagem;
     private string nomePersonagem;
+    private string pais;
+    private string campanha;
 
     public void SetNomePersonagemEscolhido(string _nomePersonagem)
     {
@@ -21,9 +23,24 @@ public class SalvaEscolhaPersonagem
     {
         idPersonagem = _idPersonagem;
     }
-
     public int GetPersonagemEscolhido() 
     {  
         return idPersonagem; 
+    }
+    public string GetCampanhaPersonagem()
+    {
+        return campanha;
+    }
+    public void SetCampanhaPersonagem(string _campanha)
+    {
+        campanha = _campanha;
+    }
+    public string GetPais()
+    {
+        return pais;
+    }
+    public void SetPais(string _pais)
+    {
+        pais = _pais;
     }
 }
