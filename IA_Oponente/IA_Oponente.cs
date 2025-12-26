@@ -6,82 +6,57 @@ using UnityEngine.UI;
 
 public class IA_Oponente : MonoBehaviour
 {
+    SistemaCombate sistemaCombate;
+
     public List<CartaDaCena> deckOponente = new List<CartaDaCena>();
 
     [SerializeField] Deck deck;
+
+    Baralho baralho;
 
     IA_MapeamentoDeCases ia_MapeamentoDeCases;
 
     ControlaTurnos controlaTurnos;
 
-    //ContadorDeMovimentos contadorDeMovimentos;
+    [SerializeField] private int guardaIDCartaComMaiorAtaque;
 
-    [SerializeField] private string guardaCartaComMaiorAtaque;
-
-    [SerializeField] private string guardaCartaComMenorAtaque;
+    [SerializeField] private int guardaIDCartaComMenorAtaque;
 
     public bool iaPodeAtacar = false;
 
     public void Start()
     {
+        sistemaCombate = GetComponent<SistemaCombate>();
         deck = GetComponent<Deck>();
         ia_MapeamentoDeCases = GetComponent<IA_MapeamentoDeCases>();
         controlaTurnos = GetComponent<ControlaTurnos>();
-        //contadorDeMovimentos = GetComponent<ContadorDeMovimentos>();
-    }
-    public void SetIDCartaOponente(int _ID)
-    {
-        //guardaIDCartaOponente = _ID;
+        baralho = GetComponent<Baralho>();
     }
 
-    public void SetCartaComMenosAtaque(string _cardNome)
+    public void SetCartaIDComMenosAtaque(int _cartaID)
     {
-        guardaCartaComMenorAtaque = _cardNome;
+        guardaIDCartaComMenorAtaque = _cartaID;
     }
-    public void SetCartaComMaiorAtaque(string _cardNome)
+    public void SetCartaIDComMaiorAtaque(int _cartaID)
     {
-        guardaCartaComMaiorAtaque = _cardNome;
+        guardaIDCartaComMaiorAtaque = _cartaID;
     }
-    //public int GetIDCartaOponente()
-    //{
-    //return guardaIDCartaOponente;
-    //}
-
-    public string GetCartaComMenosAtaque()
+    public int GetCartaIDComMenosAtaque()
     {
-        return guardaCartaComMenorAtaque;
+        return guardaIDCartaComMenorAtaque;
     }
-    public string GetCartaComMaiorAtaque()
+    public int GetCartaIDComMaiorAtaque()
     {
-        return guardaCartaComMaiorAtaque;
+        return guardaIDCartaComMaiorAtaque;
     }
     public void ControleDeAcoes()
     {
         if (controlaTurnos == true)
         {
-            //iaPodeAtacar = true;
-            //MovimentaCartas();
-            //Mapeamento();
-            //ResetaMovimentos();
-            //StartCoroutine(Intervalo());
-            StartCoroutine(EsperaCartasAparecerem());
-            //ChecaCardsAtivosDoPlayer();
-
+            StartCoroutine(EsperaAsCartasDoOponenteAparecerem());
         }
     }
-
-    public void ResetaMovimentos()
-    {
-        foreach (CartaDaCena carta in deckOponente)
-        {
-            if (carta != null)
-            {
-                //carta.moveuSe = false;
-            }
-        }
-    }
-
-    public IEnumerator EsperaCartasAparecerem()
+    public IEnumerator EsperaAsCartasDoOponenteAparecerem()
     {
         yield return new WaitForSeconds(1f);
 
@@ -91,413 +66,115 @@ public class IA_Oponente : MonoBehaviour
         {
             if (carta != null)
             {
-                ia_MapeamentoDeCases.VerificaPosicaoAtualDaCarta(carta.nome);
+                ia_MapeamentoDeCases.VerificaPosicaoAtualDaCarta(carta);
 
                 yield return new WaitForSeconds(0.2f);
             }
         }
     }
 
-    //public IEnumerator Intervalo()
-    //{
-        
-
-        //yield return new WaitForSeconds(1f);
-
-        //foreach (Card carta in deckOponente)
-        //{
-            //if(carta != null)
-            //{
-                //carta.podeAtacar = true;
-
-                //ia_MapeamentoDeCases.VerificaPossicaoAtualDaCarta(carta.nome);
-
-                //yield return new WaitForSeconds(0.2f);
-            //}
-        //}
-        //for(int i = 0; i < contadorDeMovimentos.contadorMovOponente; i++)
-        //{
-        //ia_MapeamentoDeCases.VerificaPossicaoAtualDaCarta(deckOponente[i].nome);
-        //}
-
-        //yield return new WaitForSeconds(1f);
-
-        //ChecaCardsAtivosDoPlayer();
-    //}
-
+    //CHECA TODAS AS CARTAS ATIVAS DO JOGADOR
     public void ChecaCardsAtivosDoPlayer()
     {
-        foreach (CartaDados cardAtivo in deck.geralCardList)
+        foreach (CartaDaCena cartaCena in sistemaCombate.listaCenaCartas)
         {
-            if (cardAtivo.ativo == true)
+            if (cartaCena.GetEstaAtivada() == true)
             {
-                Debug.Log("Cards ativos do jogador: " + cardAtivo.nome);
+                Debug.Log("Cards ativos do jogador: " + cartaCena.dados.nomeAtual);
 
-                //VerificaSeHaCartaOponenteComMaisAtaque(cardAtivo);
-
-                VerificaCardPlayerComMenorAtaque(cardAtivo);
+                //VerificaCardPlayerComMenorAtaque(cartaCena);
+                VerificaSeHaCartaJogadorComMenosAtaque(cartaCena);
             }
         }
-    }
-    public void VerificaCardPlayerComMenorAtaque(CartaDados _cardAtivo)
-    {
-        foreach (CartaDados card in deck.geralCardList)
-        {
-            if (card.ataque < _cardAtivo.ataque && card.ativo == true)
-            {
-                //SetCartaComMenosAtaque(card.nome);
-
-                VerificaSeHaCartaJogadorComMenosAtaque(card);
-
-                //Ataque();
-
-                Debug.Log("Chama o método para verificar se há carta do jogador mais fraca ainda");
-
-                //Debug.Log("Card jogador ativo: " + card.nome);
-
-                //break;
-            }
-            else
-            {
-                //SetCartaComMenosAtaque(_cardAtivo.nome);
-                //VerificaSeHaCartaOponenteComMaisAtaque(_cardAtivo);
-                VerificaSeHaCartaJogadorComMenosAtaque(_cardAtivo);
-            }
-            //else
-            //{
-            //SetCartaComMenosAtaque(_cardAtivo.nome);
-
-            //VerificaSeHaCartaOponenteComMaisAtaque(_cardAtivo);
-
-            //Debug.Log("Jogador só possui uma carta");
-
-            //Debug.Log("Chama o método para verificar se há carta do oponente mais forte que a única carta do jogador");
-            //}
-            //else
-            //{
-            //SetCartaComMenosAtaqueDoJogador(_cardAtivo.nome);
-
-            //VerificaSeHaCartaOponenteComMaisAtaque(card);
-            //}
-
-            //else
-            //{
-            //SetCartaComMenosAtaqueDoJogador(_cardAtivo.nome);
-
-            //VerificaSeHaCartaOponenteComMaisAtaque(_cardAtivo);
-
-            //Ataque();
-
-            //Debug.Log("Card com menor ataque do jogador: " + _cardAtivo.nome);
-
-
-            //}
-
-            //break;
-
-        }
-
-    }
-
-    public void VerificaSeHaCartaJogadorComMenosAtaque(Card _cardAtivo)
-    {
-        foreach (Card card in deck.geralCardList)
-        {
-            if (card.ataque < _cardAtivo.ataque && card.ativo == true)
-            {
-                if (card != null)
-                {
-                    SetCartaComMenosAtaque(card.nome);
-
-                    VerificaSeHaCartaOponenteComMaisAtaque(card);
-
-                    Debug.Log("Card com menor ataque entre todas as cartas do jogador : " + GetCartaComMenosAtaque());
-                }
-
-                //break;
-            }
-            else
-            {
-                if (_cardAtivo != null)
-                {
-                    SetCartaComMenosAtaque(_cardAtivo.nome);
-
-                    //VerificaSeHaCartaOponenteComMaisAtaque(_cardAtivo);
-                    VerificaCardOponenteComMaiorAtaque(_cardAtivo);
-                    //LimpaCartaComMenorAtaque(GetCartaComMenosAtaque());
-
-                    //Debug.Log("Jogador não possui cartas com menos ataque que : " + _cardAtivo.nome);
-                }
-            }
-        }
-    }
-
-    //public void LimpaCartaComMenorAtaque(string _nome)
-    //{
-    //foreach(Card carta in deck.geralCardList)
-    //{
-    //if(carta.ativo == true && carta.nome != _nome)
-    //{
-
-    //}
-    //}
-    //}
-
-    public void VerificaSeHaCartaOponenteComMaisAtaque(Card _cardMenorAtaque)
-    {
-        //MovimentaCarta(_cardMenorAtaque);
-
-        foreach (Card _cardHekaib in deckOponente)
-        {
-            //JOGADOR PRECISA TER COLOCADO UMA CARTA EM CAMPO
-            //if (_cardHekaib != null)
-            //{
-            //ia_MapeamentoDeCases.VerificaPossicaoAtualDaCarta(_cardHekaib);
-            //}
-
-            if (_cardHekaib.ataque > _cardMenorAtaque.ataque)
-            {
-                if (_cardHekaib != null)
-                {
-                    //SetCartaComMaiorAtaque(_cardHekaib.nome);
-
-                    //SetCartaComMenosAtaqueDoJogador(_cardMenorAtaque.nome);
-
-                    //Ataque();
-                    //ia_MapeamentoDeCases.VerificaPossicaoAtualDaCarta(_cardHekaib.nome);
-
-                    VerificaCardOponenteComMaiorAtaque(_cardHekaib);
-
-                    Debug.Log("Chama o método verificar se a carta com ataque ainda maior");
-                }
-                //break;
-            }
-            else
-            {
-                //SetCartaComMenosAtaque(GetCartaComMenosAtaque());
-
-                //Ataque();
-
-                //if (_cardHekaib != null)
-                //{
-                //SetCartaComMaiorAtaque(_cardHekaib.nome);
-
-                //Ataque();
-                //}
-                //ia_MapeamentoDeCases.VerificaPossicaoAtualDaCarta(_cardHekaib.nome);
-
-                VerificaSeHaCartaJogadorComMenosAtaque(_cardMenorAtaque);
-
-                //VerificaCardOponenteComMaiorAtaque(_cardMenorAtaque);
-
-                //SetCartaComMaiorAtaque(_cardHekaib.nome);
-
-                //Debug.Log("Oponente não possui cartas com ataque maior que as do jogador");
-            }
-        }
-    }
-    public void VerificaCardOponenteComMaiorAtaque(Card _cardHekaib)
-    {
-
-        foreach (Card _cardHekaibMaiorAtaque in deckOponente)
-        {
-            if (_cardHekaibMaiorAtaque.ataque > _cardHekaib.ataque)
-            {
-                //SetCartaComMaiorAtaque(null);
-
-                //ia_MapeamentoDeCases.VerificaPossicaoAtualDaCarta(GetCartaComMaiorAtaque());
-
-                if (_cardHekaibMaiorAtaque != null)
-                {
-
-                    SetCartaComMaiorAtaque(_cardHekaibMaiorAtaque.nome);
-
-                    Debug.Log("Card com maior ataque entre todas as cartas do oponente : " + GetCartaComMaiorAtaque());
-                }
-            }
-
-
-            //else
-            //{
-            //SetCartaComMaiorAtaque(_cardHekaib.nome);
-            //}
-
-            //else
-            //{
-            //if (_cardHekaib != null)
-            //{
-            //SetCartaComMaiorAtaque(_cardHekaib.nome);
-
-            //Ataque();
-            //}
-            //}
-            //else if (_cardHekaibMaiorAtaque.nome == GetCartaComMaiorAtaque())
-            //{
-            //SetCartaComMaiorAtaque(_cardHekaibMaiorAtaque.nome);
-
-            //Ataque();
-            //}
-            //else
-            //{
-            //SetCartaComMaiorAtaque(_cardHekaib.nome);
-
-            //Ataque();
-
-            //Debug.Log("O oponente não possui cartas com ataque maior que este : " + GetCartaComMaiorAtaque());
-            //}
-
-            /*
-            else
-            {
-                SetCartaComMaiorAtaque(_cardHekaib.nome);
-
-                Ataque();
-
-                Debug.Log("Card com maior ataque do oponente : " + GetCartaComMaiorAtaque());      
-            }
-            */
-
-            /*
-            else
-            {
-                //SetCartaComMaiorAtaque(_cardHekaib.nome);
-
-                //Ataque();
-
-                //Debug.Log("Card com maior ataque do oponente : " + GetCartaComMaiorAtaque());
-
-                //break;
-            }
-            */
-            //break;
-        }
-           
-            //Ataque();
+        
+        
         
     }
+
+    public void VerificaSeHaCartaJogadorComMenosAtaque(CartaDaCena _cartaAtiva)
+    {
+        foreach (CartaDaCena cartaCena in sistemaCombate.listaCenaCartas)
+        {
+            if (cartaCena.GetEstaAtivada() == true && cartaCena.dados.ataqueAtual < _cartaAtiva.dados.ataqueAtual && _cartaAtiva.GetEstaAtivada() == true)
+            {
+                    SetCartaIDComMenosAtaque(cartaCena.dados.ID);
+
+                VerificaCardOponenteComMaiorAtaque(cartaCena);
+
+                    Debug.Log("Card com menor ataque entre todas as cartas do jogador : " + cartaCena.dados.nomeAtual);
+            }
+            else
+            {
+                if (_cartaAtiva != null)
+                {
+                    SetCartaIDComMenosAtaque(_cartaAtiva.dados.ID);
+
+                    VerificaCardOponenteComMaiorAtaque(_cartaAtiva);
+                }
+            }
+        }
+
+        
+        
+        
+    }
+
+    public void VerificaCardOponenteComMaiorAtaque(CartaDaCena _cardHekaib)
+    {
+        foreach (CartaDaCena _cardHekaibMaiorAtaque in deckOponente)
+        {
+            if (_cardHekaibMaiorAtaque.dados.ataqueAtual > _cardHekaib.dados.ataqueAtual)
+            {
+                if (_cardHekaibMaiorAtaque != null)
+                {
+                    SetCartaIDComMaiorAtaque(_cardHekaibMaiorAtaque.dados.ID);
+
+                    Debug.Log("Card com maior ataque entre todas as cartas do oponente : " + _cardHekaibMaiorAtaque.dados.nomeAtual);
+                }
+
+            }
+        }
+    }
+
     public void Ataque()
     {
-        foreach (Card cardSalvoA in deckOponente)
+        foreach (CartaDaCena cardSalvoA in deckOponente)
         {
-            if (cardSalvoA.nome == GetCartaComMaiorAtaque())
+            if (cardSalvoA.dados.ID == GetCartaIDComMaiorAtaque())
             {
-                foreach (Card cardSalvoB in deck.geralCardList)
+                foreach (CartaDaCena cardSalvoB in sistemaCombate.listaCenaCartas)
                 {
-                    if (cardSalvoB.nome == GetCartaComMenosAtaque() && cardSalvoB.ativo == true)
+                    if (cardSalvoB.dados.ID == GetCartaIDComMenosAtaque() && cardSalvoB.GetEstaAtivada() == true)
                     {
                         Debug.Log("Chama o método mover carta");
 
-                        //for (int i = 0; i < contadorDeMovimentos.contadorDeAtaquesOponentes; i++)
-                        //{
-                        //iaPodeAtacar = true;
-
                         MoveCardOponente(cardSalvoA, cardSalvoB);
-                        //StartCoroutine(EsperaAtaque(cardSalvoA, cardSalvoB));
-                        //}
-
                     }
                 }
             }
-
-            //break;
         }
     }
-    //public void MovimentaCarta(Card _card)
-    //{
-    //ia_MapeamentoDeCases.VerificaPossicaoAtualDaCarta(_card);
-    //}
 
-    //public IEnumerator EsperaAtaque(Card cardSalvoA, Card cardSalvoB)
-    //{
-    //yield return new WaitForSeconds(1f);
-
-    //MoveCardOponente(cardSalvoA, cardSalvoB);
-    //}
-
-    public void MoveCardOponente(Card _cardOponenteComMaiorAtaque, Card _cardPlayerComMenorAtaque)
+    public void MoveCardOponente(CartaDaCena _cardOponenteComMaiorAtaque, CartaDaCena _cardPlayerComMenorAtaque)
     {
         foreach (Case casa in ia_MapeamentoDeCases.listaCase)
         {
-            if (casa.GetNomeCartaJogador() == _cardPlayerComMenorAtaque.nome && _cardOponenteComMaiorAtaque.podeAtacar == true && _cardOponenteComMaiorAtaque.GetMoveuSe() == false)
+            if (casa.GetNomeCartaJogador() == _cardPlayerComMenorAtaque.dados.nomeAtual && _cardOponenteComMaiorAtaque.GetPodeAtacar() == true && _cardOponenteComMaiorAtaque.GetMoveuSe() == false)
             {
-                //iaPodeAtacar = false;
-
-                _cardOponenteComMaiorAtaque.podeAtacar = false;
+                _cardOponenteComMaiorAtaque.SetPodeAtacar(false);
                 _cardOponenteComMaiorAtaque.SetMoveuSe(true);
-
-                //Debug.Log($"Nome do case com a carta de menor ataque do jogador: {casa.gameObject.name}");
 
                 if (_cardOponenteComMaiorAtaque != null && _cardPlayerComMenorAtaque != null)
                 {
 
-                    Debug.Log($"Card do oponente com maior ataque: {_cardOponenteComMaiorAtaque.nome} Card do jogador com menor ataque: {_cardPlayerComMenorAtaque.nome}");
+                    Debug.Log($"Card do oponente com maior ataque: {_cardOponenteComMaiorAtaque.gameObject.name} Card do jogador com menor ataque: {_cardPlayerComMenorAtaque.dados.nomeAtual}");
 
                     _cardOponenteComMaiorAtaque.gameObject.transform.parent = casa.gameObject.transform;
                     _cardOponenteComMaiorAtaque.gameObject.transform.position = casa.gameObject.transform.position;
 
-                    /*
-                    if (_cardPlayerComMenorAtaque.vida <= 0 || _cardPlayerComMenorAtaque == null)
-                    {
-                        foreach (Card card in deck.geralCardList)
-                        {
-                            if (card.vida > 0 && card.ativo == true)
-                            {
-                                SetCartaComMenosAtaque(card.nome);
-
-                                Debug.Log($"Nome do novo card de menor ataque do jogador: {_cardPlayerComMenorAtaque.nome}");
-
-                                //break;
-                            }
-                        }
-                    }
-                    */
-                    //break;
                 }
             }
-
-            /*
-            else
-            {
-                if (_cardOponenteComMaiorAtaque.ataque < _cardPlayerComMenorAtaque.ataque || _cardOponenteComMaiorAtaque == null)
-                {
-                    foreach (Card card in deckOponente)
-                    {
-                        if (card.ataque > _cardPlayerComMenorAtaque.ataque && card != null)
-                        {
-                            SetCartaComMaiorAtaque(card.nome);
-
-                            Debug.Log($"Nome do novo card de maior ataque do oponente: {_cardOponenteComMaiorAtaque.nome}");
-
-                            //break;
-                        }
-                    }
-                }
-            }
-            */
         }
     }
-    /*
-    if (_cardOponenteComMaiorAtaque.ataque <= _cardPlayerComMenorAtaque.ataque)
-    {
-        foreach (Card card in deck.geralCardList)
-        {
-            if (card.ataque < _cardOponenteComMaiorAtaque.ataque && card.cardAtivo == true)
-            {
-                SetCartaComMenosAtaqueDoJogador(card.nome);
-            }
-        }
-    }
-
-    if (_cardOponenteComMaiorAtaque.ataque <= _cardPlayerComMenorAtaque.ataque)
-    {
-        foreach (Card card in deckOponente)
-        {
-            if (card.ataque > _cardPlayerComMenorAtaque.ataque)
-            {
-                SetCartaComMaiorAtaque(card.nome);
-            }
-        }
-    }
-    */
 }
 

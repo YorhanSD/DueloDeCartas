@@ -5,28 +5,24 @@ using UnityEngine;
 
 public class Case : MonoBehaviour
 {
-    //[SerializeField] int caseID = 0;
+    [SerializeField] SistemaCombate sistemaCombate;
     [SerializeField] private bool caseOcupadoPeloJogador = false;
     [SerializeField] private bool caseOcupadoPeloOponente = false;
 
     [SerializeField] private string nomeCartaDoJogador;
     [SerializeField] private string nomeCartaDoOponente;
 
-    [SerializeField] private string ultimoCard;
+    [SerializeField] private int ultimoID;
 
     [SerializeField] private int possicaoCasa = 0;
 
-    [SerializeField] Energia energia;
-
-    [SerializeField] Mapeamento_Jogador mapeamentoJogador;
-
     Deck deck;
 
+    [System.Obsolete]
     public void Start()
     {
+        sistemaCombate = FindObjectOfType<SistemaCombate>();
         deck = FindObjectOfType<Deck>();
-        energia = FindObjectOfType<Energia>();
-        mapeamentoJogador = FindObjectOfType<Mapeamento_Jogador>();
     }
     public void SetCasaPossicao(int _possicaoCasa)
     {
@@ -73,14 +69,14 @@ public class Case : MonoBehaviour
         return nomeCartaDoJogador;
     }
 
-    public void SetUltimoCard(string _nome)
+    public void SetUltimoID(int _ID)
     {
-        ultimoCard = _nome;
+        ultimoID = _ID;
     }
 
-    public string GetUltimoCard()
+    public int GetUltimoID()
     {
-        return ultimoCard;
+        return ultimoID;
     }
     public void OnTriggerEnter2D(Collider2D _carta)
     {
@@ -88,92 +84,55 @@ public class Case : MonoBehaviour
         {
             SetCaseOcupadoJogador(true);
             SetNomeCartaJogador(_carta.gameObject.name);
-            SetUltimoCard(null);
+            //SetUltimoID(null);
 
             _carta.gameObject.transform.parent = this.transform;
             _carta.gameObject.transform.position = this.transform.position;
 
-            //this.gameObject.tag = "Ocupado";
-
-            //mapeamentoJogador.VerificaPossicaoAtualDaCartaDoJogador(GetNomeCartaJogador());
-
-            energia.RetiraEnergiaJogador(30);
-
-            foreach (Card carta in deck.geralCardList)
-            {
-                if (carta.nome == _carta.gameObject.name)
-                {
-                    //Debug.Log("Nome da Carta no Deck: " + carta.nome + " Nome do Coringa: " + _cardNome);
-
-                    carta.SetMoveuSe(true);
-                }
-            }
-
-            //energia.TiraEnergia(10);
+            this.gameObject.tag = "Ocupado";
         }
-
-        //if(GetCaseOcupado() == true && carta.gameObject.tag == "Card Player")
-        //{
-            //if (carta.gameObject.name != GetUltimoCard())
-            //{
-                //SetCaseOcupado(true);
-                //SetNomeCarta(carta.name);
-            //}
-        //}
 
         if (GetCaseOcupadoOponente() == false && _carta.gameObject.tag == "Card Oponente")
         {
             SetCaseOcupadoOponente(true);
-            //SetCaseOcupadoJogador(false);
             SetNomeCartaOponente(_carta.gameObject.name);
-            SetUltimoCard(null);
-
-            energia.RetiraEnergiaOponente(30);
-
-            //carta.gameObject.transform.parent = this.transform;
-            //carta.gameObject.transform.position = this.transform.position;
+            //SetUltimoID(null);
         }
     }
-    public void OnTriggerExit2D(Collider2D carta)
+    public void OnTriggerExit2D(Collider2D _carta)
     {
-        if (GetCaseOcupadoJogador() == true && carta.gameObject.tag == "Card Player")
+        if (GetCaseOcupadoJogador() == true && _carta.gameObject.tag == "Card Player")
         {
-            if (carta.gameObject.name == GetNomeCartaJogador())
+            if (_carta.gameObject.name == GetNomeCartaJogador())
             {
                 SetCaseOcupadoJogador(false);
                 SetNomeCartaJogador(null);
-                SetUltimoCard(carta.gameObject.name);
+                foreach (CartaDaCena cartaCena in sistemaCombate.listaCenaCartas)
+                {
+                    if (cartaCena.dados.nomeAtual == _carta.gameObject.name)
+                    {
+                        SetUltimoID(cartaCena.dados.ID);
+                    }
+                }
 
-                //this.gameObject.tag = "Slot Player";
+                this.gameObject.tag = "Slot Player";
             }
         }
 
-        if (GetCaseOcupadoOponente() == true && carta.gameObject.tag == "Card Oponente")
+        if (GetCaseOcupadoOponente() == true && _carta.gameObject.tag == "Card Oponente")
         {
-            if (carta.gameObject.name == GetNomeCartaOponente())
+            if (_carta.gameObject.name == GetNomeCartaOponente())
             {
                 SetCaseOcupadoOponente(false);
                 SetNomeCartaOponente(null);
-                SetUltimoCard(carta.gameObject.name);
+                foreach (CartaDaCena cartaCena in sistemaCombate.listaCenaCartas)
+                {
+                    if (cartaCena.dados.nomeAtual == _carta.gameObject.name)
+                    {
+                        SetUltimoID(cartaCena.dados.ID);
+                    }
+                }
             }
         }
-
-
-        //if (GetCaseOcupado() == false && carta.gameObject.tag == "Card Player" || carta.gameObject.tag == "Card Oponente")
-        //{
-        //SetCaseOcupado(true);
-        //SetNomeCarta(carta.gameObject.name);
-        //SetUltimoCard(null);
-
-        //carta.gameObject.transform.parent = this.transform;
-        //carta.gameObject.transform.position = this.transform.position;
-        //}
-
-        //if (GetCaseOcupado() == true && carta.gameObject.tag == "Card Oponente")
-        //{
-        //SetCaseOcupado(false);
-        //SetNomeCarta(null);
-        //SetUltimoCard(carta.gameObject.name);
-        //}
     }
 }

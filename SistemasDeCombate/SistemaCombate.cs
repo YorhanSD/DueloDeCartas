@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SistemaCombate : MonoBehaviour
 {
+    public List<CartaDaCena> listaCenaCartas = new List<CartaDaCena>();
+
+    //MONOBEHAVIOUR NÃO PODE SER CRIADO COM NEW
+
     [SerializeField] private ControlaTurnos controlaTurnos;
 
     [SerializeField] private Deck deck;
@@ -16,6 +21,7 @@ public class SistemaCombate : MonoBehaviour
 
     public bool travarJogador = false;
 
+    [System.Obsolete]
     public void Start()
     {
         deck = GetComponent<Deck>();
@@ -31,7 +37,7 @@ public class SistemaCombate : MonoBehaviour
 
     private void Update()
     {
-        if(energia.barraEnergiaJogador.value < 30)
+        if (energia.barraEnergiaJogador.value < 30)
         {
             travarJogador = true;
         }
@@ -41,107 +47,112 @@ public class SistemaCombate : MonoBehaviour
         }
     }
 
-    public void UmContraUm(string nomeAtacante, string nomeDefensor)
+    [System.Obsolete]
+    public void UmContraUm(int IDAtacante, int IDDefensor)
     {
-        foreach (Card cardA in deck.geralCardList)
+        CartaDaCena cartaCenaA = listaCenaCartas.Find(c => c.dados.ID == IDAtacante);
+        CartaDaCena cartaCenaB = listaCenaCartas.Find(c => c.dados.ID == IDDefensor);
+
+        if (cartaCenaA == null || cartaCenaB == null) return;
+
+        if (controlaTurnos.turnoOponente == false && cartaCenaA.CompareTag("Card Player") && cartaCenaB.CompareTag("Card Oponente"))
         {
-            if(cardA.nome == nomeAtacante)
+            cartaCenaA.SetPodeAtacar(false);
+            cartaCenaB.dados.vidaAtual -= cartaCenaA.dados.ataqueAtual;
+
+            AtualizaUI(cartaCenaB);
+
+            VerificaMorte(cartaCenaB);
+
+            Debug.Log($"Defensor: {cartaCenaA.dados.nomeAtual} Atacante: {cartaCenaB.dados.nomeAtual}");
+
+            Debug.Log($"Card defensor: {cartaCenaB.dados.nomeAtual} recebe {cartaCenaB.dados.ataqueAtual} de dano");
+
+            if (cartaCenaB.dados.vidaAtual > 0)
             {
-                foreach (Card cardB in deck.geralCardList)
+                foreach (Case casa in ia_MapeamentoDeCases.listaCase)
                 {
-                    if (cardB.nome == nomeDefensor)
+                    if (casa.GetUltimoID() == cartaCenaA.dados.ID)
                     {
-                        if (cardA != null && cardA.gameObject.tag == "Card Player" && cardB.gameObject.tag == "Card Oponente")
-                        {
-                            if (controlaTurnos.turnoOponente == false)
-                            {
-                                if (cardA != null && cardA.ativo == true && cardA.podeAtacar == true)
-                                {
-                                    cardA.podeAtacar = false;
-
-                                    cardB.vida -= cardA.ataque;
-
-                                    energia.RetiraEnergiaJogador(40);
-
-                                    Debug.Log($"Defensor: {cardB.nome} Atacante: {cardA.nome}");
-
-                                    Debug.Log($"Card defensor: {cardB.nome} recebe {cardA.ataque} de dano");
-
-                                    if(cardB.vida > 0)
-                                    {
-                                        foreach(Case casa in ia_MapeamentoDeCases.listaCase)
-                                        {
-                                            if(casa.GetUltimoCard() == cardA.nome)
-                                            {
-                                                cardA.gameObject.transform.parent = casa.gameObject.transform;
-                                                cardA.gameObject.transform.position = casa.gameObject.transform.position;
-
-                                                //podeMover = false;
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        //podeMover = false;
-                                        Destroy(cardB.gameObject);
-                                        controlePontos.AdicionaPontos(500);
-                                        
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (cardA != null)
-                                {
-                                    cardA.vida -= cardB.ataque;
-
-                                    energia.RetiraEnergiaOponente(40);
-
-                                    if (cardA.vida > 0 && cardA != null)
-                                    {
-                                        foreach (Case casaB in ia_MapeamentoDeCases.listaCase)
-                                        {
-                                            if (casaB.GetUltimoCard() == cardB.nome)
-                                            {
-                                                Debug.Log("Case de retorno da carta mais forte do oponente : " + casaB.gameObject.name);
-
-                                                cardB.gameObject.transform.parent = casaB.gameObject.transform;
-                                                cardB.gameObject.transform.position = casaB.gameObject.transform.position;
-                                            }
-                                        }
-
-                                    }
-                                    else
-                                    {
-                                        Destroy(cardA.gameObject );
-
-                                    }
-                                }
-
-                                Debug.Log($"Atacante: {cardB.nome} Defensor: {cardA.nome}");
-
-                                Debug.Log($"Card defensor: {cardA.nome} recebe {cardB.ataque} de dano");
-                            }
-
-                            CalculoDeDano(cardA, cardB);
-                        }
+                        cartaCenaA.gameObject.transform.parent = casa.gameObject.transform;
+                        cartaCenaA.gameObject.transform.position = casa.gameObject.transform.position;
                     }
                 }
             }
+
+        }
+        else if (controlaTurnos.turnoOponente == true && cartaCenaA.CompareTag("Card Oponente") && cartaCenaB.CompareTag("Card Player"))
+        {
+            cartaCenaA.SetPodeAtacar(false);
+            cartaCenaB.dados.vidaAtual -= cartaCenaA.dados.ataqueAtual;
+
+            AtualizaUI(cartaCenaB);
+
+            VerificaMorte(cartaCenaB);
+
+            if (cartaCenaB.dados.vidaAtual > 0 && cartaCenaA != null)
+            {
+                foreach (Case casaB in ia_MapeamentoDeCases.listaCase)
+                {
+                    if (casaB.GetUltimoID() == cartaCenaB.dados.ID)
+                    {
+                        Debug.Log("Case de retorno da carta mais forte do oponente : " + casaB.gameObject.name);
+
+                        cartaCenaB.gameObject.transform.parent = casaB.gameObject.transform;
+                        cartaCenaB.gameObject.transform.position = casaB.gameObject.transform.position;
+                    }
+                }
+
+            }
+          
+            Debug.Log($"Atacante: {cartaCenaB.dados.nomeAtual} Defensor: {cartaCenaA.dados.nomeAtual}");
+
+            Debug.Log($"Card defensor: {cartaCenaA.dados.nomeAtual} recebe {cartaCenaB.dados.ataqueAtual} de dano");
         }
 
+
+
+
     }
-    public void CalculoDeDano(Card _cardAtacante, Card _cardDefensor)
+    void VerificaMorte(CartaDaCena carta)
+    {
+        if (carta.dados.vidaAtual <= 0)
+        {
+            // Remove UI
+            deck.geralUiCardList.RemoveAll(ui => ui.idUI == carta.dados.ID);
+
+            // Remove runtime
+            deck.geralCardList.Remove(carta.dados);
+
+            // Remove da cena
+            listaCenaCartas.Remove(carta);
+
+            Destroy(carta.gameObject);
+        }
+    }
+    void AtualizaUI(CartaDaCena carta)
+    {
+        foreach (UICard ui in deck.geralUiCardList)
+        {
+            if (ui.idUI == carta.dados.ID)
+            {
+                ui.vidaUI = carta.dados.vidaAtual;
+                break;
+            }
+        }
+    }
+    /*
+    public void CalculoDeDano(CartaDaCena _cardAtacante, CartaDaCena _cardDefensor)
     {
         foreach (UICard uiCardA in deck.geralUiCardList)
         {
-           if(uiCardA.idUI == _cardAtacante.ID)
+            if (uiCardA.idUI == _cardAtacante.dados.ID)
             {
                 foreach (UICard uiCardB in deck.geralUiCardList)
                 {
-                    if (uiCardB.idUI == _cardDefensor.ID)
+                    if (uiCardB.idUI == _cardDefensor.dados.ID)
                     {
-                        if (controlaTurnos.turnoOponente == false) 
+                        if (controlaTurnos.turnoOponente == false)
                         {
                             uiCardB.vidaUI -= uiCardA.ataqueUI;
                         }
@@ -154,4 +165,6 @@ public class SistemaCombate : MonoBehaviour
             }
         }
     }
+    */
 }
+

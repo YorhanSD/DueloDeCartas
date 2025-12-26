@@ -3,24 +3,43 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+//FAZ A CARTA SE MOVER COM O PONTEIRO DO MOUSE, BASTA COLOCAR ESTE SCRIPT NA CARTA
+//DEVE SER COLOCADO SOMENTE NAS CARTAS QUE SÃO CONTROLADAS PELO JOGADOR
 public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
     public GameObject resetPoint;
-    Card card;
 
     [SerializeField] private RectTransform _transform;
     [SerializeField] private Canvas _canvas;
     [SerializeField] private CanvasGroup _canvasGroup;
 
-    SistemaCombate sistemaCombate;
+    private Canvas canvas;
 
-    void Start()
+    SistemaCombate sistemaCombate;
+    [SerializeField] CartaDaCena cartaDaCena;
+
+    [System.Obsolete]
+    void Awake()
     {
-        card = GetComponent<Card>();
+        //NÃO PODEMOS USAR FINDOBJECTOFTYPE PARA OBJETOS QUE SERÃO INSTANCIADOS
+
+        cartaDaCena = GetComponent<CartaDaCena>();
         sistemaCombate = FindObjectOfType<SistemaCombate>();
+
+        _transform = GetComponent<RectTransform>();
+        _canvasGroup = GetComponent<CanvasGroup>();
+        canvas = GetComponentInParent<Canvas>();
     }
-    //FAZ A CARTA SE MOVER COM O PONTEIRO DO MOUSE, BASTA COLOCAR ESTE SCRIPT NA CARTA
-    //DEVE SER COLOCADO SOMENTE NAS CARTAS QUE SÃO CONTROLADAS PELO JOGADOR
+    
+
+    public void SetCartaDaCena(CartaDaCena _cartaDaCena)
+    {
+        cartaDaCena = _cartaDaCena;
+    }
+    public void SetSistemaCombate(SistemaCombate sistema)
+    {
+        sistemaCombate = sistema;
+    }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -39,14 +58,19 @@ public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, 
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (sistemaCombate.travarJogador == false && card.GetMoveuSe() == false)
+        if (canvas == null || cartaDaCena == null)
+            return;
+
+        if (sistemaCombate == null)
         {
-            _transform.anchoredPosition += eventData.delta / _canvas.scaleFactor;
+            Debug.LogError("SistemaCombate não inicializado");
+            return;
         }
-
-        //Debug.Log("Pegou");
+        if (sistemaCombate.travarJogador == false && cartaDaCena.GetMoveuSe() == false)
+        {
+            _transform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        }
     }
-
     public void OnPointerDown(PointerEventData eventData)
     {
         //Debug.Log("Clicou");

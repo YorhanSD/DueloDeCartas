@@ -5,8 +5,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-[System.Serializable]
-public class CartaDados
+[CreateAssetMenu(fileName = "NovaCarta", menuName = "Cartas/CartaOriginal")]
+public class CartaOriginal: ScriptableObject
 {
     public int ID;
 
@@ -15,6 +15,4 @@ public class CartaDados
     public int vida;
 
     public int ataque;
-
-    public int resistencia;
 }

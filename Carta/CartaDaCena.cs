@@ -7,57 +7,61 @@ using UnityEngine.EventSystems;
 
 public class CartaDaCena : MonoBehaviour
 {
-    private Case slot;
+    [SerializeField] private RectTransform reactTransform;
+    [SerializeField] private Canvas _canvas;
+    [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private ControlaTurnos turnos;
+    SistemaCombate sistemaCombate;
 
-    //public Vector3 posicaoCarta;
+    private Canvas canvas;
 
-    //public enum Personagem {Mya = 0, McDino, Hekaib};
-    //public enum Arquetipo {Magico = 0, Natural, Espacial, Extinto, Tenebroso};
-    //public enum Tipo {Combatente = 0, Produtor, Defesa};
-    //public enum Funcao {Atacante = 0, Defensor = 1, Neutro = 2};
+    public CartaRuntime dados;
 
-    private bool acoplado;
+    public UICard uiEstatisticas;
 
-    public bool ativo = false;
+    [SerializeField] private bool cartaAtiva = false;
 
-    public bool podeAtacar = true;
+    [SerializeField] private bool podeAtacar = true;
 
     [SerializeField] private bool moveuSe = false;
-    
-    //private void OnTriggerEnter2D(Collider2D _collider)
-    //{
-        //if (_collider.gameObject.tag == "Slot Player" && this.gameObject.tag == "Card Player")
-        //{
-            //ativo = !ativo;
-            //moveuSe = true;
-        //}
 
-        //if (_collider.gameObject.tag == "Baralho" && this.gameObject.tag == "Card Player")
-        //{
-            //moveuSe = false;
-            //ativo = false;
-        //}
-    //}
-    
-    //private void OnTriggerExit2D(Collider2D _collider)
-    //{
-        //if (_collider.gameObject.tag == "Slot Player" && this.gameObject.tag == "Card Player")
-        //{
-            //ativo = !ativo;
-        //}
-    //}
+    [System.Obsolete]
+    void Awake()
+    {
+        canvas = GetComponentInParent<Canvas>();
+        reactTransform = GetComponent<RectTransform>();
+        canvasGroup = GetComponent<CanvasGroup>();
+        uiEstatisticas = GetComponentInParent<UICard>();
+        sistemaCombate = FindObjectOfType<SistemaCombate>();
+
+        if (canvas == null)
+        {
+            Debug.LogError($"Canvas não encontrado para a carta {gameObject.name}");
+        }
+    }
 
     private void Update()
     {
-        //if (vida <= 0)
-        //{
-            //Destroy(gameObject);
-            //this.gameObject.SetActive(false);
-            //ativo = false;
-            //moveuSe = false;
-        //}
+        //Morte();
     }
- 
+    public void SetPodeAtacar(bool _atacou)
+    {
+        podeAtacar = _atacou;
+    }
+
+    public bool GetPodeAtacar()
+    {
+        return podeAtacar;
+    }
+
+    public void SetEstaAtivada(bool _ativada)
+    {
+        cartaAtiva = _ativada;
+    }
+    public bool GetEstaAtivada()
+    {
+        return cartaAtiva;
+    }
     public bool GetMoveuSe()
     {
         return moveuSe;
@@ -65,5 +69,24 @@ public class CartaDaCena : MonoBehaviour
     public void SetMoveuSe(bool _moveuSe)
     {
         moveuSe = _moveuSe;
+    }
+
+
+    public void OnTriggerEnter2D(Collider2D _casa)
+    {        
+        if(_casa.gameObject.tag == "Slot Player" && this.gameObject.tag != "Card Oponente")
+        {
+            SetMoveuSe(true);
+            SetEstaAtivada(true);
+        }
+    }
+
+    public void Morte()
+    {
+        if (dados.vidaAtual <= 0)
+        {
+            sistemaCombate.listaCenaCartas.Remove(this);
+            Destroy(gameObject);
+        }
     }
 }

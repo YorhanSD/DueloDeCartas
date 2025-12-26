@@ -6,17 +6,15 @@ using UnityEngine;
 
 public class BancoCards : MonoBehaviour
 {
-    [SerializeField] Card card;
-    //[SerializeField] UICard uiCard;
+    [SerializeField] CartaRuntime card;
+    [SerializeField] CartaDaCena cardDaCena;
     [SerializeField] Deck deck;
 
     public int contaID = 0;
 
     void Start()
     {
-        card = new Card();
         deck = GetComponent<Deck>();
-        //uiCard = GetComponent<UICard>();
 
         CriaTorosaurus();
         CriaGiganotosaurus();
@@ -30,191 +28,200 @@ public class BancoCards : MonoBehaviour
         CriaAnjo();
         CriaSacerdotiza();
         CriaProfeta();
-        //CriaCartaCoringa();
     }
     public void CriaTorosaurus()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID = 0;
 
         card.ID = contaID;
-        card.nome = "Torosaurus";
-        card.vida = 70;
-        card.ataque = 20;
-        card.resistencia = 10;
-        
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+        card.nomeAtual = "Torosaurus";
+        card.vidaAtual = 70;
+        card.ataqueAtual = 20;
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+
+
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
     public void CriaGiganotosaurus()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID++;
 
         card.ID = contaID;
-        card.nome = "Giganotosaurus";
-        card.vida = 30;
-        card.ataque = 50;
-        card.resistencia = 20;
+        card.nomeAtual = "Giganotosaurus";
+        card.vidaAtual = 30;
+        card.ataqueAtual = 50;
 
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
     public void CriaVelociraptor()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID++;
 
         card.ID = contaID;
-        card.nome = "Velociraptor";
-        card.vida = 50;
-        card.ataque = 30;
-        card.resistencia = 10;
+        card.nomeAtual = "Velociraptor";
+        card.vidaAtual = 50;
+        card.ataqueAtual = 30;
+   
 
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
     public void CriaMalfeitorGalatico()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID++;
 
         card.ID = contaID;
-        card.nome = "Malfeitor Galatico";
-        card.vida = 30;
-        card.ataque = 60;
-        card.resistencia = 10;
+        card.nomeAtual = "Malfeitor Galatico";
+        card.vidaAtual = 30;
+        card.ataqueAtual = 60;
 
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+
+
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
     public void CriaMalfeitoraGalatica()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID++;
 
         card.ID = contaID;
-        card.nome = "Malfeitora Galatica";
-        card.vida = 20;
-        card.ataque = 70;
-        card.resistencia = 10;
+        card.nomeAtual = "Malfeitora Galatica";
+        card.vidaAtual = 20;
+        card.ataqueAtual = 70;
 
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+
+
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
     public void CriaGoliath()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID++;
 
         card.ID = contaID;
-        card.nome = "Goliath";
-        card.vida = 80;
-        card.ataque = 10;
-        card.resistencia = 10;
+        card.nomeAtual = "Goliath";
+        card.vidaAtual = 80;
+        card.ataqueAtual = 10;
 
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
     public void CriaPericuloso()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID++;
 
         card.ID = contaID;
-        card.nome = "Periculoso";
-        card.vida = 40;
-        card.ataque = 40;
-        card.resistencia = 10;
+        card.nomeAtual = "Periculoso";
+        card.vidaAtual = 40;
+        card.ataqueAtual = 40;
 
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+
+
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
     public void CriaAssombrador()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID++;
 
         card.ID = contaID;
-        card.nome = "Assombrador";
-        card.vida = 30;
-        card.ataque = 70;
-        card.resistencia = 0;
+        card.nomeAtual = "Assombrador";
+        card.vidaAtual = 30;
+        card.ataqueAtual = 70;
 
-        deck.AdicionaCard(card.ID, card.nome,card.vida, card.ataque, card.resistencia);
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
     public void CriaMortoEmCombate()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID++;
 
         card.ID = contaID;
-        card.nome = "Morto em Combate";
-        card.vida = 50;
-        card.ataque = 30;
-        card.resistencia = 10;
+        card.nomeAtual = "Morto em Combate";
+        card.vidaAtual = 50;
+        card.ataqueAtual = 30;
+       
 
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
 
     public void CriaAnjo()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID++;
 
         card.ID = contaID;
-        card.nome = "Anjo";
-        card.vida = 40;
-        card.ataque = 40;
-        card.resistencia = 10;
+        card.nomeAtual = "Anjo";
+        card.vidaAtual = 70;
+        card.ataqueAtual = 30;
 
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
 
     public void CriaSacerdotiza()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID++;
 
         card.ID = contaID;
-        card.nome = "Sacerdotiza";
-        card.vida = 60;
-        card.ataque = 30;
-        card.resistencia = 10;
+        card.nomeAtual = "Sacerdotiza";
+        card.vidaAtual = 60;
+        card.ataqueAtual = 40;
 
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+
+
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
 
     public void CriaProfeta()
     {
+        CartaRuntime card = new CartaRuntime();
         contaID++;
 
         card.ID = contaID;
-        card.nome = "Profeta";
-        card.vida = 60;
-        card.ataque = 30;
-        card.resistencia = 10;
+        card.nomeAtual = "Profeta";
+        card.vidaAtual = 50;
+        card.ataqueAtual = 50;
+  
 
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
 
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
-    }
-    public void CriaCartaCoringa()
-    {
-        contaID++;
-
-        card.ID = contaID;
-        card.nome = "Coringa";
-        card.vida = 200;
-        card.ataque = 0;
-        card.resistencia = 0;
-
-        deck.AdicionaCard(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
-
-        deck.ImprimirNomes(card.ID, card.nome, card.vida, card.ataque, card.resistencia);
+        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
 }

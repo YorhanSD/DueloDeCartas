@@ -20,7 +20,6 @@ public class ControlaTurnos : MonoBehaviour
 
     public GameObject telaTurnoPlayer;
     public GameObject telaturnoOponente;
-    //public GameObject deck;
     public GameObject botaoPassaTurno;
 
     public int numeroTurno;
@@ -100,7 +99,7 @@ public class ControlaTurnos : MonoBehaviour
         cronometro.tempoJogador = 120;
 
         ProximaCartaJogador();
-        ResetaMovimentoDasCartasDoJogador();
+        ResetaMovimentoDasCartas();
 
         numeroTurno++;
     }
@@ -108,15 +107,18 @@ public class ControlaTurnos : MonoBehaviour
     {
         baralho.ProximaCartaAleatoria();
     }
-    public void ResetaMovimentoDasCartasDoJogador()
+    public void ResetaMovimentoDasCartas()
     {
-        foreach(Card carta in deck.geralCardList)
+        foreach(CartaDaCena cartaCena in sistemaDeCombate.listaCenaCartas)
         {
-            if (carta.ativo == true) 
+            if (cartaCena != null) 
             {
-                carta.SetMoveuSe(false);
+                cartaCena.SetMoveuSe(false);
+                cartaCena.SetPodeAtacar(true);
             }
         }
+
+      
     }
     public void TelaTurnoJogador(bool _comando)
     {

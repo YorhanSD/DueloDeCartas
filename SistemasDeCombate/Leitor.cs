@@ -8,37 +8,57 @@ public class Leitor : MonoBehaviour
 {
     [SerializeField] private Deck deck;
     [SerializeField] private SistemaCombate sC;
+    [SerializeField] private Baralho baralho;
 
+    [System.Obsolete]
     public void Start()
     {
         deck = FindObjectOfType<Deck>();
-        sC = FindObjectOfType<SistemaCombate>(); 
+        sC = FindObjectOfType<SistemaCombate>();
+        baralho = FindObjectOfType<Baralho>();
     }
 
+    [System.Obsolete]
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag != null && this.gameObject.tag == "Card Oponente")
         {
-            foreach (Card card in deck.geralCardList)
+            foreach (CartaRuntime cartaA in deck.geralCardList)
             {
-                if (card.nome == collision.gameObject.name && collision.gameObject.tag == "Card Player")
+                if (cartaA.nomeAtual == collision.gameObject.name && collision.gameObject.tag == "Card Player")
                 {
-                    //Debug.Log("Carta de Ataque: " + gameObject.name + " Carta de Defesa: " + card.nome);
+                    foreach(CartaRuntime cartaB in deck.geralCardList)
+                    {
+                        if (cartaB.nomeAtual == this.gameObject.name)
+                        {
+                            Debug.Log("Carta de Ataque: " + gameObject.name + " Carta de Defesa: " + cartaA.nomeAtual);
 
-                    sC.UmContraUm(this.gameObject.name, card.nome);
+                            //ATACANTE: CARTA DO OPONENTE / DEFENSOR: CARTA DO JOGADOR
+
+                            sC.UmContraUm(cartaB.ID, cartaA.ID);
+                        }
+                    }
                 }
             }
         }
         
         if (collision.gameObject.tag != null && this.gameObject.tag == "Card Player")
         {
-            foreach (Card card in deck.geralCardList)
+            foreach (CartaRuntime cartaA in deck.geralCardList)
             {
-                if (card.nome == collision.gameObject.name && collision.gameObject.tag == "Card Oponente")
+                if (cartaA.nomeAtual == collision.gameObject.name && collision.gameObject.tag == "Card Oponente")
                 {
-                    //Debug.Log("Carta de Ataque: " + gameObject.name + " Carta de Defesa: " + card.nome);
+                    foreach (CartaRuntime cartaB in deck.geralCardList)
+                    {
+                        if (cartaB.nomeAtual == this.gameObject.name)
+                        {
+                            Debug.Log("Carta de Ataque: " + gameObject.name + " Carta de Defesa: " + cartaA.nomeAtual);
 
-                    sC.UmContraUm(this.gameObject.name, card.nome);
+                            //ATACANTE: CARTA DO OPONENTE / DEFENSOR: CARTA DO JOGADOR
+
+                            sC.UmContraUm(cartaB.ID, cartaA.ID);
+                        }
+                    }
                 }
             }
         }
