@@ -11,6 +11,8 @@ public class ControlaTurnos : MonoBehaviour
     Cronometro cronometro;
     Deck deck;
     Baralho baralho;
+    Baralho_Oponente bO;
+    BancoCards bancoCartas;
 
     public bool turnoOponente;
 
@@ -31,6 +33,7 @@ public class ControlaTurnos : MonoBehaviour
 
         //Para usar o GetComponent o Script deve estar no mesmo Objeto
 
+        bancoCartas = GetComponent<BancoCards>();
         deck = GetComponent<Deck>();
         sistemaDeCombate = GetComponent<SistemaCombate>();
         ativaCarta = GetComponent<AtivaCartaOponente>();
@@ -38,6 +41,7 @@ public class ControlaTurnos : MonoBehaviour
         cronometro = GetComponent<Cronometro>();
         mapeamentoJogador = GetComponent<Mapeamento_Jogador>();
         baralho = GetComponent<Baralho>();
+        bO = GetComponent<Baralho_Oponente>();
         
     }
 
@@ -59,6 +63,7 @@ public class ControlaTurnos : MonoBehaviour
     public IEnumerator TurnoOponente()
     {
         turnoOponente = true;
+        ResetaMovimentoDasCartas();
 
         yield return new WaitForSeconds(1.5f);
 
@@ -69,6 +74,10 @@ public class ControlaTurnos : MonoBehaviour
         telaturnoOponente.SetActive(false);
 
         numeroTurno ++;
+        if (numeroTurno > 3)
+        {
+            ProximaCartaOponente();
+        }
 
         Cursor.visible = false;
 
@@ -99,7 +108,6 @@ public class ControlaTurnos : MonoBehaviour
         cronometro.tempoJogador = 120;
 
         ProximaCartaJogador();
-        ResetaMovimentoDasCartas();
 
         numeroTurno++;
     }
@@ -107,9 +115,13 @@ public class ControlaTurnos : MonoBehaviour
     {
         baralho.ProximaCartaAleatoria();
     }
+    public void ProximaCartaOponente()
+    {
+        bO.ProximaCartaAleatoriaOponente();
+    }
     public void ResetaMovimentoDasCartas()
     {
-        foreach(CartaDaCena cartaCena in sistemaDeCombate.listaCenaCartas)
+        foreach(CartaDaCena cartaCena in bancoCartas.geralCartaCenaLista)
         {
             if (cartaCena != null) 
             {

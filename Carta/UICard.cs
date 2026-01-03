@@ -16,21 +16,35 @@ public class UICard : MonoBehaviour
 
     public int vidaUI;
 
-    public int ataqueUI;
+    //public int vidaMAX;
 
-    public int resistenciaUI;
+    public int ataqueUI;
 
     public TextMeshProUGUI nomeTMPRO;
 
     public TextMeshProUGUI ataqueTMPRO;
 
-    public TextMeshProUGUI resistenciaTMPRO;
-
-    public void Update()
+    public CartaRuntime cartaRuntime;
+    
+    public void PegarDados(CartaRuntime _carta)
     {
-        nomeTMPRO.text = nomeUI;
-        barraVida.value = vidaUI;
-        ataqueTMPRO.text = "" + ataqueUI.ToString();
-        resistenciaTMPRO.text = "" + resistenciaUI.ToString();
+        //cartaRuntime = _carta;
+
+        //AtualizarUI();
+    }
+    public void AtualizarUI(CartaRuntime _carta)
+    {
+        if (cartaRuntime == null) return;
+
+        nomeTMPRO.text = _carta.nomeAtual;
+        ataqueTMPRO.text = _carta.ataqueAtual.ToString();
+
+        nomeTMPRO.ForceMeshUpdate();
+        ataqueTMPRO.ForceMeshUpdate();
+
+        barraVida.maxValue = _carta.vidaMaxima;
+        barraVida.value = _carta.vidaAtual;
+
+        Debug.Log($"UI -> {nomeTMPRO.text} | ATK {ataqueTMPRO.text}");
     }
 }

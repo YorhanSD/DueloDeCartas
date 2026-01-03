@@ -6,7 +6,9 @@ using UnityEngine.UI;
 
 public class IA_Oponente : MonoBehaviour
 {
+    BancoCards bancoCartas;
     SistemaCombate sistemaCombate;
+    //Case casa;
 
     public List<CartaDaCena> deckOponente = new List<CartaDaCena>();
 
@@ -24,13 +26,16 @@ public class IA_Oponente : MonoBehaviour
 
     public bool iaPodeAtacar = false;
 
+    [System.Obsolete]
     public void Start()
     {
+        bancoCartas = GetComponent<BancoCards>();
         sistemaCombate = GetComponent<SistemaCombate>();
         deck = GetComponent<Deck>();
         ia_MapeamentoDeCases = GetComponent<IA_MapeamentoDeCases>();
         controlaTurnos = GetComponent<ControlaTurnos>();
         baralho = GetComponent<Baralho>();
+        //casa = FindObjectOfType<Case>();
     }
 
     public void SetCartaIDComMenosAtaque(int _cartaID)
@@ -53,104 +58,124 @@ public class IA_Oponente : MonoBehaviour
     {
         if (controlaTurnos == true)
         {
+            //JOGO SÓ FUNCIONA SE AS CARTAS DO OPONENTE ESTIVEREM OCULTAS EM CENA
+            //CASO CONTRARIO, MUITOS BUGS SURGIRÃO!
             StartCoroutine(EsperaAsCartasDoOponenteAparecerem());
         }
     }
     public IEnumerator EsperaAsCartasDoOponenteAparecerem()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
         ChecaCardsAtivosDoPlayer();
 
-        foreach (CartaDaCena carta in deckOponente)
-        {
-            if (carta != null)
-            {
-                ia_MapeamentoDeCases.VerificaPosicaoAtualDaCarta(carta);
-
-                yield return new WaitForSeconds(0.2f);
-            }
-        }
     }
 
     //CHECA TODAS AS CARTAS ATIVAS DO JOGADOR
     public void ChecaCardsAtivosDoPlayer()
     {
-        foreach (CartaDaCena cartaCena in sistemaCombate.listaCenaCartas)
+        foreach (CartaDaCena cartaCena in bancoCartas.geralCartaCenaLista)
         {
-            if (cartaCena.GetEstaAtivada() == true)
+            if (cartaCena != null)
             {
-                Debug.Log("Cards ativos do jogador: " + cartaCena.dados.nomeAtual);
+                if (cartaCena.GetEstaAtivada() == true)
+                {
+                    Debug.Log("Cards ativos do jogador: " + cartaCena.dados.nomeAtual);
 
-                //VerificaCardPlayerComMenorAtaque(cartaCena);
-                VerificaSeHaCartaJogadorComMenosAtaque(cartaCena);
+                    VerificaCartaDoJogadorComMenosAtaque(cartaCena);
+                }
+                else
+                {
+                    //FUNCIONA PERFEITAMENTE
+                    Debug.Log("Jogador não tem cartas ativas");
+                    StartCoroutine(VerificaMovimento());
+                }
             }
         }
-        
-        
-        
     }
 
-    public void VerificaSeHaCartaJogadorComMenosAtaque(CartaDaCena _cartaAtiva)
+    public void VerificaCartaDoJogadorComMenosAtaque(CartaDaCena _cartaAtiva)
     {
-        foreach (CartaDaCena cartaCena in sistemaCombate.listaCenaCartas)
+        foreach (CartaDaCena cartaMenorAtaque in bancoCartas.geralCartaCenaLista)
         {
-            if (cartaCena.GetEstaAtivada() == true && cartaCena.dados.ataqueAtual < _cartaAtiva.dados.ataqueAtual && _cartaAtiva.GetEstaAtivada() == true)
+            if (cartaMenorAtaque.GetEstaAtivada() == true && cartaMenorAtaque.dados.ataqueAtual < _cartaAtiva.dados.ataqueAtual && _cartaAtiva.GetEstaAtivada() == true)
             {
-                    SetCartaIDComMenosAtaque(cartaCena.dados.ID);
+                SetCartaIDComMenosAtaque(cartaMenorAtaque.dados.ID);
 
-                VerificaCardOponenteComMaiorAtaque(cartaCena);
+                VerificaAtaque(cartaMenorAtaque);
 
-                    Debug.Log("Card com menor ataque entre todas as cartas do jogador : " + cartaCena.dados.nomeAtual);
+                Debug.Log("Card com menor ataque entre todas as cartas do jogador : " + cartaMenorAtaque.dados.nomeAtual);
             }
             else
             {
-                if (_cartaAtiva != null)
-                {
-                    SetCartaIDComMenosAtaque(_cartaAtiva.dados.ID);
+                SetCartaIDComMenosAtaque(_cartaAtiva.dados.ID);
 
-                    VerificaCardOponenteComMaiorAtaque(_cartaAtiva);
-                }
+                VerificaAtaque(_cartaAtiva);
+
+                Debug.Log("Só existe uma carta do jogador: " + _cartaAtiva.dados.nomeAtual);
+
             }
         }
 
-        
-        
-        
     }
 
-    public void VerificaCardOponenteComMaiorAtaque(CartaDaCena _cardHekaib)
+    public void VerificaAtaque(CartaDaCena _cartaJogador)
     {
-        foreach (CartaDaCena _cardHekaibMaiorAtaque in deckOponente)
+        foreach (CartaDaCena _cartaOponenteComMaiorAtaque in deckOponente)
         {
-            if (_cardHekaibMaiorAtaque.dados.ataqueAtual > _cardHekaib.dados.ataqueAtual)
+            if (_cartaOponenteComMaiorAtaque.dados.ataqueAtual > _cartaJogador.dados.ataqueAtual)
             {
-                if (_cardHekaibMaiorAtaque != null)
-                {
-                    SetCartaIDComMaiorAtaque(_cardHekaibMaiorAtaque.dados.ID);
+                SetCartaIDComMaiorAtaque(_cartaOponenteComMaiorAtaque.dados.ID);
 
-                    Debug.Log("Card com maior ataque entre todas as cartas do oponente : " + _cardHekaibMaiorAtaque.dados.nomeAtual);
-                }
+                Debug.Log($"Carta {_cartaOponenteComMaiorAtaque} tem mais ataque que {_cartaJogador}");
+            }
+            else
+            {
+                SetCartaIDComMaiorAtaque(_cartaOponenteComMaiorAtaque.dados.ID);
 
+                Debug.Log($"{_cartaOponenteComMaiorAtaque} não tem ataque maior que {_cartaJogador}");
+            }
+        }
+
+        ia_MapeamentoDeCases.VerificaPosicaoAtualDaCarta(GetCartaIDComMaiorAtaque());
+        StartCoroutine(VerificaMovimento());
+    }
+
+    public IEnumerator VerificaMovimento()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        foreach (CartaDaCena _cartaApta in deckOponente)
+        {
+            if (_cartaApta.GetMoveuSe() == false)
+            {
+                ia_MapeamentoDeCases.VerificaPosicaoAtualDaCarta(_cartaApta.dados.ID);
+            }
+            else
+            {
+                Debug.Log("Oponente só tem uma carta e ela atacou");
             }
         }
     }
 
     public void Ataque()
     {
-        foreach (CartaDaCena cardSalvoA in deckOponente)
-        {
-            if (cardSalvoA.dados.ID == GetCartaIDComMaiorAtaque())
-            {
-                foreach (CartaDaCena cardSalvoB in sistemaCombate.listaCenaCartas)
-                {
-                    if (cardSalvoB.dados.ID == GetCartaIDComMenosAtaque() && cardSalvoB.GetEstaAtivada() == true)
-                    {
-                        Debug.Log("Chama o método mover carta");
+        CartaDaCena cartaOponente = deckOponente.Find(c => c.dados.ID == GetCartaIDComMaiorAtaque());
+        CartaDaCena cartaJogador = bancoCartas.geralCartaCenaLista.Find(c => c.dados.ID == GetCartaIDComMenosAtaque());
 
-                        MoveCardOponente(cardSalvoA, cardSalvoB);
-                    }
-                }
+        Case _casaOponente = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == GetCartaIDComMaiorAtaque());
+        Case _casaJogador = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == GetCartaIDComMenosAtaque());
+
+        if (_casaJogador != null && _casaOponente != null)
+        {
+            Debug.Log($"Número da casa do jogador {_casaJogador.GetPosicaoCasa()}");
+            Debug.Log($"Número da casa do oponente {_casaOponente.GetPosicaoCasa()}");
+
+            //REGRA DAS CASAS, UMA CARTA EM UMA CASA PAR SÓ SE MOVE PARA OUTRA CASA PAR
+            //UMA CARTA EM UMA CASA IMPAR, SÓ SE MOVE PARA OUTRA CASA IMPAR
+            if (_casaJogador.GetPosicaoCasa() % 2 == 0 && _casaOponente.GetPosicaoCasa() % 2 == 0 || _casaJogador.GetPosicaoCasa() % 2 != 0 && _casaOponente.GetPosicaoCasa() % 2 != 0)
+            {
+                MoveCardOponente(cartaOponente, cartaJogador);
             }
         }
     }
@@ -169,8 +194,10 @@ public class IA_Oponente : MonoBehaviour
 
                     Debug.Log($"Card do oponente com maior ataque: {_cardOponenteComMaiorAtaque.gameObject.name} Card do jogador com menor ataque: {_cardPlayerComMenorAtaque.dados.nomeAtual}");
 
-                    _cardOponenteComMaiorAtaque.gameObject.transform.parent = casa.gameObject.transform;
-                    _cardOponenteComMaiorAtaque.gameObject.transform.position = casa.gameObject.transform.position;
+                    //_cardOponenteComMaiorAtaque.gameObject.transform.parent = casa.gameObject.transform;
+                    //_cardOponenteComMaiorAtaque.gameObject.transform.position = casa.gameObject.transform.position;
+                    _cardOponenteComMaiorAtaque.transform.SetParent(casa.gameObject.transform, false);
+                    _cardOponenteComMaiorAtaque.transform.localPosition = Vector3.zero;
 
                 }
             }

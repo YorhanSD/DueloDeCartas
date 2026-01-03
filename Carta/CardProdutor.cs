@@ -10,6 +10,8 @@ public class CardProdutor : MonoBehaviour
     public TextMeshProUGUI textoProducao;
 
     Energia energia;
+
+    [System.Obsolete]
     void Start()
     {
         tempoProducao = 30;

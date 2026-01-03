@@ -11,18 +11,21 @@ public class CartaDaCena : MonoBehaviour
     [SerializeField] private Canvas _canvas;
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private ControlaTurnos turnos;
-    SistemaCombate sistemaCombate;
 
     private Canvas canvas;
 
     public CartaRuntime dados;
 
-    public UICard uiEstatisticas;
+    public CartaOriginal cartaBase;
+
+    public UICard uiCarta;
+
+    [SerializeField] private Transform uiParent;
 
     [SerializeField] private bool cartaAtiva = false;
 
     [SerializeField] private bool podeAtacar = true;
-
+     
     [SerializeField] private bool moveuSe = false;
 
     [System.Obsolete]
@@ -31,29 +34,60 @@ public class CartaDaCena : MonoBehaviour
         canvas = GetComponentInParent<Canvas>();
         reactTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
-        uiEstatisticas = GetComponentInParent<UICard>();
-        sistemaCombate = FindObjectOfType<SistemaCombate>();
 
         if (canvas == null)
         {
             Debug.LogError($"Canvas não encontrado para a carta {gameObject.name}");
         }
     }
-
-    private void Update()
+    void Start()
     {
-        //Morte();
+        if (dados == null && cartaBase != null)
+        {
+            //dados = new CartaRuntime();
+            //dados.cartaOriginal = cartaBase;
+            //dados.Inicializar(GeradorID.GerarID());
+
+            //uiCarta = Instantiate(uiPrefab, uiParent);
+            //uiCarta.PegarDados(dados);
+        }
     }
+    public static class GeradorID
+    {
+        //private static int idAtual = 0;
+        //public static int GerarID()
+        //{
+            //idAtual++;
+            //return idAtual;
+        //}
+    }
+    public void GravaUI(CartaRuntime _cartaRuntime)
+    {
+        uiCarta.nomeTMPRO.text = _cartaRuntime.nomeAtual;
+        uiCarta.barraVida.maxValue = _cartaRuntime.vidaMaxima;
+        uiCarta.barraVida.value = _cartaRuntime.vidaAtual;
+        uiCarta.ataqueTMPRO.text = _cartaRuntime.ataqueAtual.ToString();
+    }
+    public void Inicializar(CartaRuntime cartaRuntime, UICard _UI, Transform uiParent)
+    {
+        dados = cartaRuntime;
+
+        //uiCarta = Instantiate(_UI, uiParent);
+        GravaUI(cartaRuntime);
+        //uiCarta.PegarDados(cartaRuntime);
+
+
+        Debug.Log($"UI criada para {cartaRuntime.nomeAtual}");
+    }
+
     public void SetPodeAtacar(bool _atacou)
     {
         podeAtacar = _atacou;
     }
-
     public bool GetPodeAtacar()
     {
         return podeAtacar;
     }
-
     public void SetEstaAtivada(bool _ativada)
     {
         cartaAtiva = _ativada;
@@ -78,15 +112,6 @@ public class CartaDaCena : MonoBehaviour
         {
             SetMoveuSe(true);
             SetEstaAtivada(true);
-        }
-    }
-
-    public void Morte()
-    {
-        if (dados.vidaAtual <= 0)
-        {
-            sistemaCombate.listaCenaCartas.Remove(this);
-            Destroy(gameObject);
         }
     }
 }

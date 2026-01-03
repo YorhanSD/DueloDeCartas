@@ -5,13 +5,10 @@ using UnityEngine;
 
 public class SistemaCombate : MonoBehaviour
 {
-    public List<CartaDaCena> listaCenaCartas = new List<CartaDaCena>();
-
     //MONOBEHAVIOUR NÃO PODE SER CRIADO COM NEW
+    BancoCards bancoCartas;
 
     [SerializeField] private ControlaTurnos controlaTurnos;
-
-    [SerializeField] private Deck deck;
 
     IA_MapeamentoDeCases ia_MapeamentoDeCases;
 
@@ -24,7 +21,7 @@ public class SistemaCombate : MonoBehaviour
     [System.Obsolete]
     public void Start()
     {
-        deck = GetComponent<Deck>();
+        bancoCartas = GetComponent<BancoCards>();
 
         controlaTurnos = GetComponent<ControlaTurnos>();
 
@@ -48,70 +45,99 @@ public class SistemaCombate : MonoBehaviour
     }
 
     [System.Obsolete]
-    public void UmContraUm(int IDAtacante, int IDDefensor)
+    public void UmContraUm(int IDDefensor, int IDAtacante)
     {
-        CartaDaCena cartaCenaA = listaCenaCartas.Find(c => c.dados.ID == IDAtacante);
-        CartaDaCena cartaCenaB = listaCenaCartas.Find(c => c.dados.ID == IDDefensor);
+        CartaDaCena ataca = bancoCartas.geralCartaCenaLista.Find(c => c.dados.ID == IDDefensor);
+        CartaDaCena defende = bancoCartas.geralCartaCenaLista.Find(c => c.dados.ID == IDAtacante);
 
-        if (cartaCenaA == null || cartaCenaB == null) return;
+        if (ataca == null || defende == null) return;
 
-        if (controlaTurnos.turnoOponente == false && cartaCenaA.CompareTag("Card Player") && cartaCenaB.CompareTag("Card Oponente"))
+        if (controlaTurnos.turnoOponente == false && ataca.CompareTag("Card Player") && defende.CompareTag("Card Oponente"))
         {
-            cartaCenaA.SetPodeAtacar(false);
-            cartaCenaB.dados.vidaAtual -= cartaCenaA.dados.ataqueAtual;
+            ataca.SetPodeAtacar(false);
+            defende.dados.vidaAtual -= ataca.dados.ataqueAtual;
 
-            AtualizaUI(cartaCenaB);
+            if (defende.uiCarta != null)
+            {
+                defende.uiCarta.AtualizarUI(defende.dados);
+            }
+            else
+            {
+                Debug.LogError($"Carta {defende.name} está sem UI ligada!");
+            }
 
-            VerificaMorte(cartaCenaB);
+            VerificaMorte(defende);
 
-            Debug.Log($"Defensor: {cartaCenaA.dados.nomeAtual} Atacante: {cartaCenaB.dados.nomeAtual}");
+            Debug.Log($"Defensor: {defende.dados.nomeAtual} Atacante: {ataca.dados.nomeAtual}");
 
-            Debug.Log($"Card defensor: {cartaCenaB.dados.nomeAtual} recebe {cartaCenaB.dados.ataqueAtual} de dano");
+            Debug.Log($"Card defensor: {defende.dados.nomeAtual} recebe {ataca.dados.ataqueAtual} de dano");
 
-            if (cartaCenaB.dados.vidaAtual > 0)
+            if (defende.dados.vidaAtual > 0)
             {
                 foreach (Case casa in ia_MapeamentoDeCases.listaCase)
                 {
-                    if (casa.GetUltimoID() == cartaCenaA.dados.ID)
+                    if (casa.GetUltimoID() == ataca.dados.ID)
                     {
-                        cartaCenaA.gameObject.transform.parent = casa.gameObject.transform;
-                        cartaCenaA.gameObject.transform.position = casa.gameObject.transform.position;
+                        ataca.transform.SetParent(casa.gameObject.transform, false);
+                        ataca.transform.localPosition = Vector3.zero;
                     }
                 }
             }
+            else
+            {
+                //Mover isso para o método morte
+                foreach (Case casa in ia_MapeamentoDeCases.listaCase)
+                {
+                    if (casa.GetIDCartaOcupante() == defende.dados.ID)
+                    {
+                        casa.SetIDCartaOcupante(ataca.dados.ID );
+                        //casa.SetUltimoID(ataca.dados.ID);
 
+                        Debug.Log($"{ataca.dados.nomeAtual} tomou a casa de {defende.dados.nomeAtual}");
+                    }
+                }
+            }
         }
-        else if (controlaTurnos.turnoOponente == true && cartaCenaA.CompareTag("Card Oponente") && cartaCenaB.CompareTag("Card Player"))
+        else if (controlaTurnos.turnoOponente == true && ataca.CompareTag("Card Oponente") && defende.CompareTag("Card Player"))
         {
-            cartaCenaA.SetPodeAtacar(false);
-            cartaCenaB.dados.vidaAtual -= cartaCenaA.dados.ataqueAtual;
+            ataca.SetPodeAtacar(false);
+            defende.dados.vidaAtual -= ataca.dados.ataqueAtual;
 
-            AtualizaUI(cartaCenaB);
+            if (defende.uiCarta != null)
+            {
+                defende.uiCarta.AtualizarUI(defende.dados);
+            }
+            else
+            {
+                Debug.LogError($"Carta {defende.name} está sem UI ligada!");
+            }
 
-            VerificaMorte(cartaCenaB);
+            VerificaMorte(defende);
 
-            if (cartaCenaB.dados.vidaAtual > 0 && cartaCenaA != null)
+            if (defende.dados.vidaAtual > 0)
             {
                 foreach (Case casaB in ia_MapeamentoDeCases.listaCase)
                 {
-                    if (casaB.GetUltimoID() == cartaCenaB.dados.ID)
+                    if (casaB.GetUltimoID() == ataca.dados.ID)
                     {
-                        Debug.Log("Case de retorno da carta mais forte do oponente : " + casaB.gameObject.name);
-
-                        cartaCenaB.gameObject.transform.parent = casaB.gameObject.transform;
-                        cartaCenaB.gameObject.transform.position = casaB.gameObject.transform.position;
+                        ataca.transform.SetParent(casaB.gameObject.transform, false);
+                        ataca.transform.localPosition = Vector3.zero;
                     }
                 }
 
             }
-          
-            Debug.Log($"Atacante: {cartaCenaB.dados.nomeAtual} Defensor: {cartaCenaA.dados.nomeAtual}");
-
-            Debug.Log($"Card defensor: {cartaCenaA.dados.nomeAtual} recebe {cartaCenaB.dados.ataqueAtual} de dano");
+            else
+            {
+                foreach (Case casa in ia_MapeamentoDeCases.listaCase)
+                {
+                    if (casa.GetIDCartaOcupante() == defende.dados.ID)
+                    {
+                        casa.SetIDCartaOcupante(ataca.dados.ID);
+                        //casa.SetUltimoID(ataca.dados.ID);
+                    }
+                }
+            }
         }
-
-
-
 
     }
     void VerificaMorte(CartaDaCena carta)
@@ -119,49 +145,26 @@ public class SistemaCombate : MonoBehaviour
         if (carta.dados.vidaAtual <= 0)
         {
             // Remove UI
-            deck.geralUiCardList.RemoveAll(ui => ui.idUI == carta.dados.ID);
+            //bancoCartas.geralCartaUILista.RemoveAll(ui => ui.idUI == carta.dados.ID);
 
             // Remove runtime
-            deck.geralCardList.Remove(carta.dados);
+            bancoCartas.geralCartaRuntimeLista.Remove(carta.dados);
 
             // Remove da cena
-            listaCenaCartas.Remove(carta);
+            bancoCartas.geralCartaCenaLista.Remove(carta);
 
             Destroy(carta.gameObject);
         }
     }
+    /*
     void AtualizaUI(CartaDaCena carta)
     {
-        foreach (UICard ui in deck.geralUiCardList)
+        foreach (UICard ui in bancoCartas.geralCartaUILista)
         {
             if (ui.idUI == carta.dados.ID)
             {
                 ui.vidaUI = carta.dados.vidaAtual;
                 break;
-            }
-        }
-    }
-    /*
-    public void CalculoDeDano(CartaDaCena _cardAtacante, CartaDaCena _cardDefensor)
-    {
-        foreach (UICard uiCardA in deck.geralUiCardList)
-        {
-            if (uiCardA.idUI == _cardAtacante.dados.ID)
-            {
-                foreach (UICard uiCardB in deck.geralUiCardList)
-                {
-                    if (uiCardB.idUI == _cardDefensor.dados.ID)
-                    {
-                        if (controlaTurnos.turnoOponente == false)
-                        {
-                            uiCardB.vidaUI -= uiCardA.ataqueUI;
-                        }
-                        else
-                        {
-                            uiCardA.vidaUI -= uiCardB.ataqueUI;
-                        }
-                    }
-                }
             }
         }
     }

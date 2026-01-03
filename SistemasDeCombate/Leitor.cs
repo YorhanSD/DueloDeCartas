@@ -9,6 +9,7 @@ public class Leitor : MonoBehaviour
     [SerializeField] private Deck deck;
     [SerializeField] private SistemaCombate sC;
     [SerializeField] private Baralho baralho;
+    [SerializeField] private BancoCards bancoCartas;
 
     [System.Obsolete]
     public void Start()
@@ -16,51 +17,53 @@ public class Leitor : MonoBehaviour
         deck = FindObjectOfType<Deck>();
         sC = FindObjectOfType<SistemaCombate>();
         baralho = FindObjectOfType<Baralho>();
+        bancoCartas = FindObjectOfType<BancoCards>();
     }
 
     [System.Obsolete]
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag != null && this.gameObject.tag == "Card Oponente")
+        if (collision.gameObject.tag != null && this.gameObject.tag == "Card Oponente")
         {
-            foreach (CartaRuntime cartaA in deck.geralCardList)
+            CartaDaCena atacante = null;
+            CartaDaCena defensor = null;
+
+            foreach (CartaDaCena carta in bancoCartas.geralCartaCenaLista)
             {
-                if (cartaA.nomeAtual == collision.gameObject.name && collision.gameObject.tag == "Card Player")
-                {
-                    foreach(CartaRuntime cartaB in deck.geralCardList)
-                    {
-                        if (cartaB.nomeAtual == this.gameObject.name)
-                        {
-                            Debug.Log("Carta de Ataque: " + gameObject.name + " Carta de Defesa: " + cartaA.nomeAtual);
+                if (carta.gameObject == collision.gameObject)
+                    atacante = carta;
 
-                            //ATACANTE: CARTA DO OPONENTE / DEFENSOR: CARTA DO JOGADOR
-
-                            sC.UmContraUm(cartaB.ID, cartaA.ID);
-                        }
-                    }
-                }
+                if (carta.gameObject == this.gameObject)
+                    defensor = carta;
             }
+
+            if (atacante != null && defensor != null)
+            {
+                sC.UmContraUm(defensor.dados.ID, atacante.dados.ID);
+            }
+
         }
-        
+
         if (collision.gameObject.tag != null && this.gameObject.tag == "Card Player")
         {
-            foreach (CartaRuntime cartaA in deck.geralCardList)
+            CartaDaCena atacante = null;
+            CartaDaCena defensor = null;
+
+            foreach (CartaDaCena carta in bancoCartas.geralCartaCenaLista)
             {
-                if (cartaA.nomeAtual == collision.gameObject.name && collision.gameObject.tag == "Card Oponente")
-                {
-                    foreach (CartaRuntime cartaB in deck.geralCardList)
-                    {
-                        if (cartaB.nomeAtual == this.gameObject.name)
-                        {
-                            Debug.Log("Carta de Ataque: " + gameObject.name + " Carta de Defesa: " + cartaA.nomeAtual);
+                if (carta.gameObject == collision.gameObject)
+                    atacante = carta;
 
-                            //ATACANTE: CARTA DO OPONENTE / DEFENSOR: CARTA DO JOGADOR
-
-                            sC.UmContraUm(cartaB.ID, cartaA.ID);
-                        }
-                    }
-                }
+                if (carta.gameObject == this.gameObject)
+                    defensor = carta;
             }
+
+            if (atacante != null && defensor != null)
+            {
+                sC.UmContraUm(defensor.dados.ID, atacante.dados.ID);
+            }
+
         }
+
     }
-}
+ }

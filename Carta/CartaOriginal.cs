@@ -14,5 +14,7 @@ public class CartaOriginal: ScriptableObject
 
     public int vida;
 
+    public int vidaMaxima;
+
     public int ataque;
 }

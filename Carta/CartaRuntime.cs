@@ -7,6 +7,8 @@ public class CartaRuntime
     public string nomeAtual;
     public int ataqueAtual;
     public int vidaAtual;
+    public int vidaMaxima;
+
     public CartaOriginal cartaOriginal;
 
     public void Inicializar(int ID)
@@ -15,5 +17,6 @@ public class CartaRuntime
         nomeAtual = cartaOriginal.nome;
         ataqueAtual = cartaOriginal.ataque;
         vidaAtual = cartaOriginal.vida;
+        vidaMaxima = cartaOriginal.vidaMaxima;
     }
 }

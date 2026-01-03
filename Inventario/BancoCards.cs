@@ -6,28 +6,36 @@ using UnityEngine;
 
 public class BancoCards : MonoBehaviour
 {
+    //public List<UICard> geralCartaUILista = new List<UICard>();
+    public List<CartaRuntime> geralCartaRuntimeLista = new();
+    public List<CartaDaCena> geralCartaCenaLista = new();
+
     [SerializeField] CartaRuntime card;
-    [SerializeField] CartaDaCena cardDaCena;
-    [SerializeField] Deck deck;
+    [SerializeField] CartaDaCena cartaCena;
+    [SerializeField] UICard uiPrefab;
 
     public int contaID = 0;
 
-    void Start()
+    void Awake()
     {
-        deck = GetComponent<Deck>();
+        //CriaTorosaurus();
+        //CriaGiganotosaurus();
+        //CriaVelociraptor();
+        //CriaMalfeitorGalatico();
+        //CriaMalfeitoraGalatica();
+        //CriaGoliath();
+        //CriaPericuloso();
+        //CriaAssombrador();
+        //CriaMortoEmCombate();
+        //CriaAnjo();
+        //CriaSacerdotiza();
+        //CriaProfeta();
 
-        CriaTorosaurus();
-        CriaGiganotosaurus();
-        CriaVelociraptor();
-        CriaMalfeitorGalatico();
-        CriaMalfeitoraGalatica();
-        CriaGoliath();
-        CriaPericuloso();
-        CriaAssombrador();
-        CriaMortoEmCombate();
-        CriaAnjo();
-        CriaSacerdotiza();
-        CriaProfeta();
+        CriarCartasDaCena();
+           
+        
+
+        //geralCartaCenaLista.Clear();
     }
     public void CriaTorosaurus()
     {
@@ -37,13 +45,13 @@ public class BancoCards : MonoBehaviour
         card.ID = contaID;
         card.nomeAtual = "Torosaurus";
         card.vidaAtual = 70;
-        card.ataqueAtual = 20;
+        card.ataqueAtual = 30;
 
+        geralCartaRuntimeLista.Add(card);
 
-
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
-
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        //UICard uICard = new UICard();
+        //uICard.InserirUI(card.ID);
+     
     }
     public void CriaGiganotosaurus()
     {
@@ -55,11 +63,11 @@ public class BancoCards : MonoBehaviour
         card.vidaAtual = 30;
         card.ataqueAtual = 50;
 
+        geralCartaRuntimeLista.Add(card);
 
+       //UICard uICard = new UICard();
+       //uICard.InserirUI(card.ID);
 
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
-
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
     }
     public void CriaVelociraptor()
     {
@@ -70,12 +78,11 @@ public class BancoCards : MonoBehaviour
         card.nomeAtual = "Velociraptor";
         card.vidaAtual = 50;
         card.ataqueAtual = 30;
-   
 
+        geralCartaRuntimeLista.Add(card);
 
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
-
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        //UICard uICard = new UICard();
+        //uICard.InserirUI(card.ID);
     }
     public void CriaMalfeitorGalatico()
     {
@@ -87,12 +94,10 @@ public class BancoCards : MonoBehaviour
         card.vidaAtual = 30;
         card.ataqueAtual = 60;
 
+        geralCartaRuntimeLista.Add(card);
 
-
-
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
-
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        //UICard uICard = new UICard();
+        //uICard.InserirUI(card.ID);
     }
     public void CriaMalfeitoraGalatica()
     {
@@ -104,12 +109,10 @@ public class BancoCards : MonoBehaviour
         card.vidaAtual = 20;
         card.ataqueAtual = 70;
 
+        geralCartaRuntimeLista.Add(card);
 
-
-
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
-
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        //UICard uICard = new UICard();
+        //uICard.InserirUI(card.ID);
     }
     public void CriaGoliath()
     {
@@ -121,11 +124,10 @@ public class BancoCards : MonoBehaviour
         card.vidaAtual = 80;
         card.ataqueAtual = 10;
 
+        geralCartaRuntimeLista.Add(card);
 
-
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
-
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        //UICard uICard = new UICard();
+        //uICard.InserirUI(card.ID);
     }
     public void CriaPericuloso()
     {
@@ -137,12 +139,10 @@ public class BancoCards : MonoBehaviour
         card.vidaAtual = 40;
         card.ataqueAtual = 40;
 
+        geralCartaRuntimeLista.Add(card);
 
-
-
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
-
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        //UICard uICard = new UICard();
+        //uICard.InserirUI(card.ID);
     }
     public void CriaAssombrador()
     {
@@ -154,9 +154,10 @@ public class BancoCards : MonoBehaviour
         card.vidaAtual = 30;
         card.ataqueAtual = 70;
 
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        geralCartaRuntimeLista.Add(card);
 
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        //UICard uICard = new UICard();
+        //uICard.InserirUI(card.ID);
     }
     public void CriaMortoEmCombate()
     {
@@ -167,11 +168,11 @@ public class BancoCards : MonoBehaviour
         card.nomeAtual = "Morto em Combate";
         card.vidaAtual = 50;
         card.ataqueAtual = 30;
-       
 
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        geralCartaRuntimeLista.Add(card);
 
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        //UICard uICard = new UICard();
+        //uICard.InserirUI(card.ID);
     }
 
     public void CriaAnjo()
@@ -184,11 +185,10 @@ public class BancoCards : MonoBehaviour
         card.vidaAtual = 70;
         card.ataqueAtual = 30;
 
+        geralCartaRuntimeLista.Add(card);
 
-
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
-
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        //UICard uICard = new UICard();
+        //uICard.InserirUI(card.ID);
     }
 
     public void CriaSacerdotiza()
@@ -201,12 +201,10 @@ public class BancoCards : MonoBehaviour
         card.vidaAtual = 60;
         card.ataqueAtual = 40;
 
+        geralCartaRuntimeLista.Add(card);
 
-
-
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
-
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        //UICard uICard = new UICard();
+        //uICard.InserirUI(card.ID);
     }
 
     public void CriaProfeta()
@@ -218,10 +216,30 @@ public class BancoCards : MonoBehaviour
         card.nomeAtual = "Profeta";
         card.vidaAtual = 50;
         card.ataqueAtual = 50;
-  
 
-        deck.AdicionaCard(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        geralCartaRuntimeLista.Add(card);
 
-        deck.ImprimirNomes(card.ID, card.nomeAtual, card.vidaAtual, card.ataqueAtual);
+        //UICard uICard = new UICard();
+        //uICard.InserirUI(card.ID);
+    }
+
+    public void CriarCartasDaCena()
+    {
+        for (int i = 0; i < 12; i++)
+        {
+            CartaRuntime runtime = new CartaRuntime();
+            runtime.cartaOriginal = geralCartaCenaLista[contaID].cartaBase;
+            runtime.Inicializar(contaID);
+
+            geralCartaRuntimeLista.Add(runtime);
+            geralCartaCenaLista[contaID].dados = runtime;
+
+            // cria a UI aqui
+            //UICard uiCarta = new UICard();
+            //uiCarta.PegarDados(geralCartaCenaLista[contaID].dados);
+            geralCartaCenaLista[contaID].GravaUI(runtime);
+
+            contaID++;
+        }
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Mapeamento_Jogador : MonoBehaviour
 {
+    BancoCards bancoCartas;
+
     SistemaCombate sistemaCombate;
 
     IA_MapeamentoDeCases ia_MapeamentoDeCases;
@@ -12,6 +14,8 @@ public class Mapeamento_Jogador : MonoBehaviour
 
     private void Start()
     {
+        bancoCartas = GetComponent<BancoCards>();
+
         sistemaCombate = GetComponent<SistemaCombate>();
 
         deck = GetComponent<Deck>();
@@ -24,7 +28,7 @@ public class Mapeamento_Jogador : MonoBehaviour
         {
             if (casa.GetNomeCartaJogador() == _nome)
             {
-                foreach (CartaDaCena cartaCena in sistemaCombate.listaCenaCartas)
+                foreach (CartaDaCena cartaCena in bancoCartas.geralCartaCenaLista)
                 {
                     // A CARTA NÃO DEVE SER ATIVA, POIS SÓ PASSA A SER ATIVA, QUANDO ENTRA NO CASE.
                     // SENDO ASSIM NÃO PASSARIA NA VERIFICAÇÃO DO IF.
@@ -32,7 +36,7 @@ public class Mapeamento_Jogador : MonoBehaviour
                     if (cartaCena.dados.nomeAtual == _nome)
                     {
                        
-                        MovimentosPossiveisDoJogador(casa.GetPossicaoCasa(), cartaCena);
+                        //MovimentosPossiveisDoJogador(casa.GetPossicaoCasa(), cartaCena);
                     }
                 }
             }

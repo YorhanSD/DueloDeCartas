@@ -11,11 +11,14 @@ public class Baralho : MonoBehaviour
     //LISTAS EXCLUSIVAS PARA CARTAS CLONES
     [SerializeField] private List<CartaDaCena> cartaTemp = new List<CartaDaCena>();
     [SerializeField] private List<CartaOriginal> dadosTemp = new List<CartaOriginal>();
-    public List<UICard> uiTemp = new List<UICard>();
 
+    [SerializeField] UICard uiPrefab;
+    [SerializeField] Transform uiParent;
+
+    BancoCards bancoCartas;
     SistemaCombate sistemaCombate;
 
-    int contador = 11;
+    public int contador = 11;
     public Canvas canvas;
     Deck deck;
 
@@ -25,48 +28,36 @@ public class Baralho : MonoBehaviour
     {
         sistemaCombate = GetComponent<SistemaCombate>();
         deck = GetComponent<Deck>();
+        bancoCartas = GetComponent<BancoCards>();
+        //CriarUISExistentes();
     }
     public void ProximaCartaAleatoria()
     {
         numeroAleatorio = UnityEngine.Random.Range(0, 3);
 
-        TransformaCoringaEm(numeroAleatorio);
+        CriaDuplicata(numeroAleatorio);
     }
 
-    public void TransformaCoringaEm(int _numeroSortiado)
+    public void CriaDuplicata(int _numeroSortiado)
     {
-       
-        CartaDaCena cartaClone  = Instantiate(cartaTemp[_numeroSortiado], baralhoTransform, false);
-
-        baralhoTransform.localScale = Vector3.one;
-
-        cartaClone.gameObject.name = cartaTemp[_numeroSortiado].name;
+        CartaDaCena cartaClone = Instantiate(
+            cartaTemp[_numeroSortiado],
+            baralhoTransform,
+            false
+        );
 
         contador++;
 
         CartaRuntime cartaRuntime = new CartaRuntime();
-        cartaRuntime.ID = contador;
         cartaRuntime.cartaOriginal = dadosTemp[_numeroSortiado];
         cartaRuntime.Inicializar(contador);
+        cartaClone.gameObject.name = cartaRuntime.nomeAtual;
+        cartaClone.GravaUI(cartaRuntime);
 
-        cartaClone.dados = cartaRuntime;
+        bancoCartas.geralCartaCenaLista.Add(cartaClone);
+        bancoCartas.geralCartaRuntimeLista.Add(cartaRuntime);
 
-        UICard uiNova = Instantiate(uiTemp[numeroAleatorio], canvas.transform);
+        cartaClone.transform.localPosition = Vector3.zero;
 
-        uiNova.idUI = contador;
-        uiNova.nomeUI = cartaRuntime.nomeAtual;
-        uiNova.ataqueUI = cartaRuntime.ataqueAtual;
-        uiNova.vidaUI = cartaRuntime.vidaAtual;
-
-        //cartaTemp.Add(cartaClone);
-        sistemaCombate.listaCenaCartas.Add(cartaClone);
-        deck.geralCardList.Add(cartaRuntime);
-        deck.geralUiCardList.Add(uiNova);
-
-        //deck.AdicionaCard(cartaClone.dados.ID,cartaClone.dados.nome, cartaClone.dados.vida, cartaClone.dados.ataque);
-        //deck.ImprimirNomes(cartaClone.dados.ID, cartaClone.dados.nome, cartaClone.dados.vida, cartaClone.dados.ataque);
-
-        cartaClone.transform.parent = baralhoTransform.transform;
-        cartaClone.gameObject.transform.position = baralhoTransform.transform.position;
     }
 }

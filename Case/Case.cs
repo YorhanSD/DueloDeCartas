@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,38 +6,50 @@ using UnityEngine;
 
 public class Case : MonoBehaviour
 {
+    public CartaDaCena cartaOcupante;
+
     [SerializeField] SistemaCombate sistemaCombate;
+    [SerializeField] BancoCards bancoCartas;
+
     [SerializeField] private bool caseOcupadoPeloJogador = false;
     [SerializeField] private bool caseOcupadoPeloOponente = false;
 
     [SerializeField] private string nomeCartaDoJogador;
     [SerializeField] private string nomeCartaDoOponente;
 
+    [SerializeField] private int idCartaOcupante;
+
     [SerializeField] private int ultimoID;
 
-    [SerializeField] private int possicaoCasa = 0;
-
-    Deck deck;
+    [SerializeField] private int posicaoCasa = 0;
 
     [System.Obsolete]
     public void Start()
     {
+        idCartaOcupante = -1;
+        bancoCartas = FindObjectOfType<BancoCards>();
         sistemaCombate = FindObjectOfType<SistemaCombate>();
-        deck = FindObjectOfType<Deck>();
     }
-    public void SetCasaPossicao(int _possicaoCasa)
+    public void SetIDCartaOcupante(int _cartaID)
     {
-        possicaoCasa = _possicaoCasa;
+        idCartaOcupante = _cartaID;
     }
-    public int GetPossicaoCasa()
+    public int GetIDCartaOcupante()
     {
-        return possicaoCasa;
+        return idCartaOcupante;
+    }
+    public void SetCasaPosicao(int _possicaoCasa)
+    {
+        posicaoCasa = _possicaoCasa;
+    }
+    public int GetPosicaoCasa()
+    {
+        return posicaoCasa;
     }
     public void SetCaseOcupadoOponente(bool _caseOcupado)
     {
         caseOcupadoPeloOponente = _caseOcupado;
     }
-
     public bool GetCaseOcupadoOponente()
     {
         return caseOcupadoPeloOponente;
@@ -45,7 +58,6 @@ public class Case : MonoBehaviour
     {
         caseOcupadoPeloJogador = _caseOcupado;
     }
-
     public bool GetCaseOcupadoJogador()
     {
         return caseOcupadoPeloJogador;
@@ -54,7 +66,6 @@ public class Case : MonoBehaviour
     {
         nomeCartaDoOponente = _nomeCarta;
     }
-
     public string GetNomeCartaOponente()
     {
         return nomeCartaDoOponente;
@@ -63,76 +74,107 @@ public class Case : MonoBehaviour
     {
         nomeCartaDoJogador = _nomeCarta;
     }
-
     public string GetNomeCartaJogador()
     {
         return nomeCartaDoJogador;
     }
-
     public void SetUltimoID(int _ID)
     {
         ultimoID = _ID;
     }
-
     public int GetUltimoID()
     {
         return ultimoID;
     }
     public void OnTriggerEnter2D(Collider2D _carta)
     {
-        if (GetCaseOcupadoJogador() == false && _carta.gameObject.tag == "Card Player")
-        {
-            SetCaseOcupadoJogador(true);
-            SetNomeCartaJogador(_carta.gameObject.name);
-            //SetUltimoID(null);
-
-            _carta.gameObject.transform.parent = this.transform;
-            _carta.gameObject.transform.position = this.transform.position;
-
-            this.gameObject.tag = "Ocupado";
-        }
-
-        if (GetCaseOcupadoOponente() == false && _carta.gameObject.tag == "Card Oponente")
-        {
-            SetCaseOcupadoOponente(true);
-            SetNomeCartaOponente(_carta.gameObject.name);
-            //SetUltimoID(null);
-        }
+        CartaDaCena cartaEntrando = _carta.GetComponent<CartaDaCena>();
+        OcuparCasa(cartaEntrando);
     }
     public void OnTriggerExit2D(Collider2D _carta)
     {
-        if (GetCaseOcupadoJogador() == true && _carta.gameObject.tag == "Card Player")
+        CartaDaCena cartaSaindo = _carta.GetComponent<CartaDaCena>();
+        DesocuparCasa(cartaSaindo);
+    }
+
+    public void OcuparCasa(CartaDaCena _cartaEntrando)
+    {
+        if (_cartaEntrando == null) return;
+        cartaOcupante = _cartaEntrando;
+
+        if (cartaOcupante.CompareTag("Card Player"))
         {
-            if (_carta.gameObject.name == GetNomeCartaJogador())
+            if (GetCaseOcupadoJogador() == false && GetCaseOcupadoOponente() == false)
             {
+                SetNomeCartaJogador(cartaOcupante.dados.nomeAtual);
+                SetCaseOcupadoJogador(true);
+                SetIDCartaOcupante(cartaOcupante.dados.ID);
+
+                cartaOcupante.transform.SetParent(this.transform, false);
+                cartaOcupante.transform.localPosition = Vector3.zero;
+
+                this.gameObject.tag = "Ocupado";
+            }
+            else if (GetCaseOcupadoOponente())
+            {
+                SetUltimoID(cartaOcupante.dados.ID);
+            }
+        }
+        if (_cartaEntrando.CompareTag("Card Oponente"))
+        {
+            if (GetCaseOcupadoJogador() == false && GetCaseOcupadoOponente() == false)
+            {
+                SetNomeCartaOponente(cartaOcupante.gameObject.name);
+                SetCaseOcupadoOponente(true);
+                SetIDCartaOcupante(cartaOcupante.dados.ID);
+            }
+            else if (GetCaseOcupadoJogador())
+            {
+                SetUltimoID(cartaOcupante.dados.ID);
+            }
+        }
+    }
+
+    public void DesocuparCasa(CartaDaCena _cartaSaindo)
+    {
+        if (_cartaSaindo == null) return;
+        cartaOcupante = _cartaSaindo;
+
+        if (GetCaseOcupadoJogador() && cartaOcupante.CompareTag("Card Oponente")) return;
+
+        if (GetCaseOcupadoJogador() && cartaOcupante.CompareTag("Card Player"))
+        {
+            SetUltimoID(cartaOcupante.dados.ID);
+
+            this.gameObject.tag = "Slot Player";
+
+            if (cartaOcupante == null)
+            {
+                //Lógica de ataque ainda funciona com base nos nomes
+                //Corrigir futuramente
+                //SetUltimoID(cartaOcupante.dados.ID);
                 SetCaseOcupadoJogador(false);
+                SetIDCartaOcupante(-1);
                 SetNomeCartaJogador(null);
-                foreach (CartaDaCena cartaCena in sistemaCombate.listaCenaCartas)
-                {
-                    if (cartaCena.dados.nomeAtual == _carta.gameObject.name)
-                    {
-                        SetUltimoID(cartaCena.dados.ID);
-                    }
-                }
-
-                this.gameObject.tag = "Slot Player";
             }
         }
 
-        if (GetCaseOcupadoOponente() == true && _carta.gameObject.tag == "Card Oponente")
+        if (GetCaseOcupadoOponente() && cartaOcupante.CompareTag("Card Player")) return;
+
+        if (GetCaseOcupadoOponente() && cartaOcupante.CompareTag("Card Oponente"))
         {
-            if (_carta.gameObject.name == GetNomeCartaOponente())
+            SetUltimoID(cartaOcupante.dados.ID);
+
+            if (cartaOcupante == null)
             {
+                //Lógica de ataque ainda funciona com base nos nomes
+                //Corrigir futuramente
+                //SetUltimoID(cartaOcupante.dados.ID);
                 SetCaseOcupadoOponente(false);
+                SetIDCartaOcupante(-1);
                 SetNomeCartaOponente(null);
-                foreach (CartaDaCena cartaCena in sistemaCombate.listaCenaCartas)
-                {
-                    if (cartaCena.dados.nomeAtual == _carta.gameObject.name)
-                    {
-                        SetUltimoID(cartaCena.dados.ID);
-                    }
-                }
             }
         }
+
     }
 }
