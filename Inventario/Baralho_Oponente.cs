@@ -4,7 +4,8 @@ using UnityEngine;
 public class Baralho_Oponente : MonoBehaviour
 {
     //LISTAS EXCLUSIVAS PARA CARTAS CLONES
-    [SerializeField] private List<CartaDaCena> cartaTemp = new List<CartaDaCena>();
+    public List<CartaDaCena> deckOponente = new List<CartaDaCena>();
+    [SerializeField] private List<CartaDaCena> cenaTemp = new List<CartaDaCena>();
     [SerializeField] private List<CartaOriginal> dadosTemp = new List<CartaOriginal>();
 
     public List<Case> casesOponente = new List<Case>();
@@ -13,25 +14,14 @@ public class Baralho_Oponente : MonoBehaviour
     [SerializeField] Transform uiParent;
 
     BancoCards bancoCartas;
-    SistemaCombate sistemaCombate;
     Baralho baralho;
-
     public Canvas canvas;
-    Deck deck;
-
     public int numeroAleatorio;
-    //public Transform baralhoTransform;
-    public int guardaPosicaoDaCasa;
-    //public int casaDisponivel;
-    //public bool existeCasasOcupadasPeloOponente;
-    public int casaReferenciaDeMenorPosicao = 8;
+    public int casaReferenciaDeMenorPosicao = 10;
     public Transform casaTransform;
 
-    //IA_MapeamentoDeCases ia_MapeamentoDeCases;
     public void Start()
     {
-        sistemaCombate = GetComponent<SistemaCombate>();
-        deck = GetComponent<Deck>();
         bancoCartas = GetComponent<BancoCards>();
         baralho = GetComponent<Baralho>();
     }
@@ -44,17 +34,17 @@ public class Baralho_Oponente : MonoBehaviour
     }
     public void ChecaCasasVazias(int _numeroAleatorio)
     {
-        casaReferenciaDeMenorPosicao = 8;
+        casaReferenciaDeMenorPosicao = 10;
 
         foreach (Case _casa in casesOponente)
         {
-            if (_casa.GetCaseOcupadoOponente() == true)
+            if (_casa.GetCaseOcupadoOponente() == true || _casa.GetCaseOcupadoJogador() == true)
             {
                 //SEMPRE QUE HOUVER CASAS OCUPADAS, A POSIÇÃO DE REFERÊNCIA AUMENTA
+
                 if (casaReferenciaDeMenorPosicao < 14)
                 {
                     casaReferenciaDeMenorPosicao++;
-                    Debug.Log($"Próxima casa livre: {casaReferenciaDeMenorPosicao}");
                 }
             }
             else
@@ -69,23 +59,33 @@ public class Baralho_Oponente : MonoBehaviour
     }
     public void DefinePosicaoDaCarta(Transform _posicaoCasa, int _numeroSortiado)
     {
-        CartaDaCena cartaClone = Instantiate(cartaTemp[_numeroSortiado], _posicaoCasa, false);
+        CartaDaCena cartaClone = Instantiate(cenaTemp[_numeroSortiado], _posicaoCasa, false);
 
         CriaDuplicata(_numeroSortiado, cartaClone);
     }
     public void CriaDuplicata(int _numeroSortiado, CartaDaCena cartaClone)
     {
-        baralho.contador++;
-
         CartaRuntime cartaRuntime = new CartaRuntime();
         cartaRuntime.cartaOriginal = dadosTemp[_numeroSortiado];
-        cartaRuntime.Inicializar(baralho.contador);
+        cartaRuntime.Inicializar(bancoCartas.contaID);
+
+        cartaClone.dados = cartaRuntime;
+
         cartaClone.GravaUI(cartaRuntime);
+        cartaClone.PrintaDados(cartaRuntime);
+        //cartaClone.uiCarta.AtualizarUI(cartaClone.dados);
+
+        //cartaClone.GravaDados(cartaRuntime);
+
+        //Debug.Log($"Baralho jogador gerou a carta: {cartaRuntime.nomeAtual} com o ID: {cartaRuntime.ID}");
 
         bancoCartas.geralCartaCenaLista.Add(cartaClone);
         bancoCartas.geralCartaRuntimeLista.Add(cartaRuntime);
+        deckOponente.Add(cartaClone);
 
         cartaClone.transform.localPosition = Vector3.zero;
+
+        bancoCartas.contaID++;
     }
 
 }

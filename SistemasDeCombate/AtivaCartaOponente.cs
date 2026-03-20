@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEditorInternal;
 using UnityEngine;
 
+[System.Obsolete]
 public class AtivaCartaOponente : MonoBehaviour
 {
+    //Script Desativado, Finalmente!!!
     public GameObject[] cartaOponente;
 
     public IEnumerator SpawnaCartas()

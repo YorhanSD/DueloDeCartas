@@ -1,16 +1,19 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SistemaCombate : MonoBehaviour
 {
-    //MONOBEHAVIOUR N�O PODE SER CRIADO COM NEW
+    //MONOBEHAVIOUR NÃO PODE SER CRIADO COM NEW
     BancoCards bancoCartas;
 
     [SerializeField] private ControlaTurnos controlaTurnos;
 
     IA_MapeamentoDeCases ia_MapeamentoDeCases;
+
+    Case casa;
 
     ControlePontos controlePontos;
 
@@ -21,6 +24,9 @@ public class SistemaCombate : MonoBehaviour
     [System.Obsolete]
     public void Start()
     {
+
+        casa = FindObjectOfType<Case>();
+
         bancoCartas = GetComponent<BancoCards>();
 
         controlaTurnos = GetComponent<ControlaTurnos>();
@@ -32,30 +38,27 @@ public class SistemaCombate : MonoBehaviour
         energia = GetComponent<Energia>();
     }
 
-    private void Update()
-    {
-        if (energia.barraEnergiaJogador.value < 30)
-        {
-            travarJogador = true;
-        }
-        else
-        {
-            travarJogador = false;
-        }
-    }
-
-    [System.Obsolete]
     public void UmContraUm(int IDDefensor, int IDAtacante)
     {
-        CartaDaCena ataca = bancoCartas.geralCartaCenaLista.Find(c => c.dados.ID == IDDefensor);
-        CartaDaCena defende = bancoCartas.geralCartaCenaLista.Find(c => c.dados.ID == IDAtacante);
+        CartaDaCena ataca = bancoCartas.geralCartaCenaLista.Find(c => c.dados.ID == IDAtacante);
+        CartaDaCena defende = bancoCartas.geralCartaCenaLista.Find(c => c.dados.ID == IDDefensor);
 
         if (ataca == null || defende == null) return;
 
         if (controlaTurnos.turnoOponente == false && ataca.CompareTag("Card Player") && defende.CompareTag("Card Oponente"))
         {
+            GravaUltimoID(ataca);
+
             ataca.SetPodeAtacar(false);
-            defende.dados.vidaAtual -= ataca.dados.ataqueAtual;
+            ataca.SetMoveuSe(true);
+
+            ChecaEspecie(ataca, defende);
+            //defende.dados.vidaAtual -= ataca.dados.ataqueAtual;
+
+            defende.PrintaDados(defende.dados);
+
+            
+
 
             if (defende.uiCarta != null)
             {
@@ -63,45 +66,36 @@ public class SistemaCombate : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"Carta {defende.name} est� sem UI ligada!");
+                Debug.LogError($"Carta {defende.printNome} está sem UI ligada!");
             }
 
-            VerificaMorte(defende);
+            bool morreu = defende.dados.vidaAtual <= 0;
 
-            Debug.Log($"Defensor: {defende.dados.nomeAtual} Atacante: {ataca.dados.nomeAtual}");
+            //VerificaMorte(defende);
 
-            Debug.Log($"Card defensor: {defende.dados.nomeAtual} recebe {ataca.dados.ataqueAtual} de dano");
-
-            if (defende.dados.vidaAtual > 0)
+            if (morreu)
             {
-                foreach (Case casa in ia_MapeamentoDeCases.listaCase)
-                {
-                    if (casa.GetUltimoID() == ataca.dados.ID)
-                    {
-                        ataca.transform.SetParent(casa.gameObject.transform, false);
-                        ataca.transform.localPosition = Vector3.zero;
-                    }
-                }
+                MoveCartaParaACasaQueDestruiuOCard(ataca, defende);
             }
             else
             {
-                //Mover isso para o m�todo morte
-                foreach (Case casa in ia_MapeamentoDeCases.listaCase)
-                {
-                    if (casa.GetIDCartaOcupante() == defende.dados.ID)
-                    {
-                        casa.SetIDCartaOcupante(ataca.dados.ID );
-                        //casa.SetUltimoID(ataca.dados.ID);
-
-                        Debug.Log($"{ataca.dados.nomeAtual} tomou a casa de {defende.dados.nomeAtual}");
-                    }
-                }
+                Retorno(ataca, defende);
             }
         }
         else if (controlaTurnos.turnoOponente == true && ataca.CompareTag("Card Oponente") && defende.CompareTag("Card Player"))
         {
+
+            GravaUltimoID(ataca);
+
             ataca.SetPodeAtacar(false);
-            defende.dados.vidaAtual -= ataca.dados.ataqueAtual;
+            ataca.SetMoveuSe(true);
+
+            ChecaEspecie(ataca, defende);
+            //defende.dados.vidaAtual -= ataca.dados.ataqueAtual;
+
+            defende.PrintaDados(defende.dados);
+
+            
 
             if (defende.uiCarta != null)
             {
@@ -109,43 +103,60 @@ public class SistemaCombate : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"Carta {defende.name} est� sem UI ligada!");
+                Debug.LogError($"Carta {defende.printNome} está sem UI ligada!");
             }
 
-            VerificaMorte(defende);
+            bool morreu = defende.dados.vidaAtual <= 0;
 
-            if (defende.dados.vidaAtual > 0)
+            //VerificaMorte(defende);
+
+            if (morreu)
             {
-                foreach (Case casaB in ia_MapeamentoDeCases.listaCase)
-                {
-                    if (casaB.GetUltimoID() == ataca.dados.ID)
-                    {
-                        ataca.transform.SetParent(casaB.gameObject.transform, false);
-                        ataca.transform.localPosition = Vector3.zero;
-                    }
-                }
-
+                MoveCartaParaACasaQueDestruiuOCard(ataca, defende);
             }
             else
             {
-                foreach (Case casa in ia_MapeamentoDeCases.listaCase)
-                {
-                    if (casa.GetIDCartaOcupante() == defende.dados.ID)
-                    {
-                        casa.SetIDCartaOcupante(ataca.dados.ID);
-                        //casa.SetUltimoID(ataca.dados.ID);
-                    }
-                }
+                Retorno(ataca, defende);
             }
         }
 
     }
+    void Retorno(CartaDaCena _ataca, CartaDaCena _defende)
+    {
+        if (_defende.dados.vidaAtual > 0)
+        {
+            foreach (Case casaB in ia_MapeamentoDeCases.listaCase)
+            {
+                if (casaB.GetUltimoID() == _ataca.dados.ID) //Casa mais próxima
+                {
+                    _ataca.transform.SetParent(casaB.gameObject.transform, false);
+                    _ataca.transform.localPosition = Vector3.zero;
+                    _ataca.SetMoveuSe(true);
+                }
+            }
+        }
+    }
+    void GravaUltimoID(CartaDaCena _ataca)
+    {
+        foreach (Case casa in ia_MapeamentoDeCases.listaCase)
+        {
+            if (casa.GetIDCartaOcupante() == _ataca.dados.ID)
+            {
+                casa.SetUltimoID(_ataca.dados.ID); //Grava o id da carta atacante na sua própria casa
+            }
+
+            //if (casa.GetIDCartaOcupante() == _defende.dados.ID)
+            //{
+                //casa.SetUltimoID(_ataca.dados.ID); //Grava o id da carta atacante na casa em que ela invade
+            //}
+        }
+    }
+
+    
     void VerificaMorte(CartaDaCena carta)
     {
         if (carta.dados.vidaAtual <= 0)
         {
-            // Remove UI
-            //bancoCartas.geralCartaUILista.RemoveAll(ui => ui.idUI == carta.dados.ID);
 
             // Remove runtime
             bancoCartas.geralCartaRuntimeLista.Remove(carta.dados);
@@ -156,18 +167,72 @@ public class SistemaCombate : MonoBehaviour
             Destroy(carta.gameObject);
         }
     }
-    /*
-    void AtualizaUI(CartaDaCena carta)
+
+    public void MoveCartaParaACasaQueDestruiuOCard(CartaDaCena ataca, CartaDaCena defende)
     {
-        foreach (UICard ui in bancoCartas.geralCartaUILista)
+        Case casaDefensor = null;
+
+        foreach (Case casa in ia_MapeamentoDeCases.listaCase)
         {
-            if (ui.idUI == carta.dados.ID)
+            if (casa.GetIDCartaOcupante() == defende.dados.ID)
             {
-                ui.vidaUI = carta.dados.vidaAtual;
+                casaDefensor = casa;
                 break;
             }
         }
+
+        if (casaDefensor == null) return;
+
+        // MOVE atacante
+        ataca.transform.SetParent(casaDefensor.transform);
+        ataca.transform.localPosition = Vector3.zero;
+
+        // ATUALIZA A CASA
+        casaDefensor.SetIDCartaOcupante(ataca.dados.ID);
+
+        if (ataca.CompareTag("Card Player"))
+        {
+            casaDefensor.SetCaseOcupadoJogador(true);
+            casaDefensor.SetCaseOcupadoOponente(false);
+        }
+        else
+        {
+            casaDefensor.SetCaseOcupadoOponente(true);
+            casaDefensor.SetCaseOcupadoJogador(false);
+        }
+
+        // ATUALIZA OCUPANTE INTERNO
+        casaDefensor.SetCartaOcupante(ataca);
+
+        // REMOVE defensor
+        bancoCartas.geralCartaRuntimeLista.Remove(defende.dados);
+        bancoCartas.geralCartaCenaLista.Remove(defende);
+
+        Destroy(defende.gameObject);
+
+        ataca.SetMoveuSe(true);
     }
-    */
+
+    public void ChecaEspecie(CartaDaCena ataca, CartaDaCena defende)
+    {
+        if (ataca.dados.especieSelecionada == "Celestial" && defende.dados.especieSelecionada == "Tenebroso")
+        {
+            defende.dados.vidaAtual -= ataca.dados.ataqueAtual * 2;
+
+            Debug.Log($"Atacante: {ataca.dados.nome} tem a espécie: {ataca.dados.especieSelecionada}");
+            Debug.Log($"Defensor: {defende.dados.nome} tem a espécie: {defende.dados.especieSelecionada}");
+
+            Debug.Log($"{ataca.dados.nome} com o ID: {ataca.dados.ID} aplica [{ataca.dados.ataqueAtual * 2}] de dano a {defende.dados.nome} com o ID: {defende.dados.ID}");
+        }
+        else if(ataca.dados.especieSelecionada == "Tenebroso" && defende.dados.especieSelecionada == "Celestial")
+        {
+            defende.dados.vidaAtual -= ataca.dados.ataqueAtual / 2;
+
+            Debug.Log($"Atacante: {ataca.dados.nome} tem a espécie: {ataca.dados.especieSelecionada}");
+            Debug.Log($"Defensor: {defende.dados.nome} tem a espécie: {defende.dados.especieSelecionada}");
+
+            Debug.Log($"{ataca.dados.nome} com o ID: {ataca.dados.ID} aplica [{ataca.dados.ataqueAtual / 2}] de dano a {defende.dados.nome} com o ID: {defende.dados.ID}");
+        }
+    }
 }
 

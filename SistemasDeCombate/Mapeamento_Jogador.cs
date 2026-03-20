@@ -33,7 +33,7 @@ public class Mapeamento_Jogador : MonoBehaviour
                     // A CARTA NÃO DEVE SER ATIVA, POIS SÓ PASSA A SER ATIVA, QUANDO ENTRA NO CASE.
                     // SENDO ASSIM NÃO PASSARIA NA VERIFICAÇÃO DO IF.
 
-                    if (cartaCena.dados.nomeAtual == _nome)
+                    if (cartaCena.dados.nome == _nome)
                     {
                        
                         //MovimentosPossiveisDoJogador(casa.GetPossicaoCasa(), cartaCena);

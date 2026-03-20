@@ -56,7 +56,7 @@ public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, 
 
         //Debug.Log("Inicio");
         selecionou = true;
-        Debug.Log($"Carta {gameObject.name} selecionada");
+        //Debug.Log($"Carta {gameObject.name} selecionada");
     }
     public void OnEndDrag(PointerEventData eventData)
     {
@@ -64,7 +64,7 @@ public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, 
         _canvasGroup.blocksRaycasts = true;
 
         //soltou = true;
-        selecionou = false;
+        //selecionou = false;
         //Debug.Log("Soltou");
     }
 
@@ -99,12 +99,12 @@ public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, 
         {
             encostouEmOutraCartaSua = true;
 
-            Debug.Log($"{gameObject.name} encostou na carta {collision.gameObject.name}");
+            //Debug.Log($"{gameObject.name} encostou na carta {collision.gameObject.name}");
 
-            CartaDaCena cartaRetaguarda = bancoCartas.geralCartaCenaLista.Find(c => c.dados.nomeAtual == collision.gameObject.name);
-            CartaDaCena cartaVanguarda = bancoCartas.geralCartaCenaLista.Find(c => c.dados.nomeAtual == this.gameObject.name);
+            CartaDaCena cartaRetaguarda = bancoCartas.geralCartaCenaLista.Find(c => c.dados.nome == collision.gameObject.name);
+            CartaDaCena cartaVanguarda = bancoCartas.geralCartaCenaLista.Find(c => c.dados.nome == this.gameObject.name);
             //trocaLugar.VerificaPosicaoDasCartas(cartaRetaguarda, cartaVanguarda);
-            Debug.Log("Troca em desenvolvimento!");
+            //Debug.Log("Troca em desenvolvimento!");
         }
     }
 }

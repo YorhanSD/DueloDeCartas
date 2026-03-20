@@ -9,14 +9,15 @@ public class ControlaTurnos : MonoBehaviour
     IA_Oponente iaOponente;
     SistemaCombate sistemaDeCombate;
     Cronometro cronometro;
-    Deck deck;
-    Baralho baralho;
-    Baralho_Oponente bO;
-    BancoCards bancoCartas;
+
+    Baralho baralhoJogador;
+    Baralho_Oponente baralhoOponente;
+
+    //BancoCards bancoCartas;
 
     public bool turnoOponente;
 
-    AtivaCartaOponente ativaCarta;
+    IA_MapeamentoDeCases ia_MapeamentoDeCases;
 
     Mapeamento_Jogador mapeamentoJogador;
 
@@ -26,22 +27,25 @@ public class ControlaTurnos : MonoBehaviour
 
     public int numeroTurno;
     public TextMeshProUGUI textoTurno;
-    
+
+    [System.Obsolete]
     public void Start()
     {
         numeroTurno = 1;
 
         //Para usar o GetComponent o Script deve estar no mesmo Objeto
 
-        bancoCartas = GetComponent<BancoCards>();
-        deck = GetComponent<Deck>();
+        //bancoCartas = GetComponent<BancoCards>();
+
         sistemaDeCombate = GetComponent<SistemaCombate>();
-        ativaCarta = GetComponent<AtivaCartaOponente>();
+
         iaOponente = GetComponent<IA_Oponente>();
         cronometro = GetComponent<Cronometro>();
         mapeamentoJogador = GetComponent<Mapeamento_Jogador>();
-        baralho = GetComponent<Baralho>();
-        bO = GetComponent<Baralho_Oponente>();
+        baralhoJogador = GetComponent<Baralho>();
+        baralhoOponente = GetComponent<Baralho_Oponente>();
+        StartCoroutine(GeraCartasDoJogador());
+        ia_MapeamentoDeCases = FindObjectOfType<IA_MapeamentoDeCases>();
         
     }
 
@@ -63,7 +67,10 @@ public class ControlaTurnos : MonoBehaviour
     public IEnumerator TurnoOponente()
     {
         turnoOponente = true;
+
         ResetaMovimentoDasCartas();
+
+        ResetaUltimoIDCasas();
 
         yield return new WaitForSeconds(1.5f);
 
@@ -74,6 +81,12 @@ public class ControlaTurnos : MonoBehaviour
         telaturnoOponente.SetActive(false);
 
         numeroTurno ++;
+
+        if(numeroTurno == 2)
+        {
+            StartCoroutine(GeraCartasDoOponente());
+        }
+
         if (numeroTurno > 3)
         {
             ProximaCartaOponente();
@@ -81,7 +94,7 @@ public class ControlaTurnos : MonoBehaviour
 
         Cursor.visible = false;
 
-        StartCoroutine(ativaCarta.SpawnaCartas());
+
 
         yield return new WaitForSeconds(1f);
 
@@ -113,15 +126,33 @@ public class ControlaTurnos : MonoBehaviour
     }
     public void ProximaCartaJogador()
     {
-        baralho.ProximaCartaAleatoria();
+        baralhoJogador.ProximaCartaAleatoria();
     }
     public void ProximaCartaOponente()
     {
-        bO.ProximaCartaAleatoriaOponente();
+        baralhoOponente.ProximaCartaAleatoriaOponente();
+    }
+    public IEnumerator GeraCartasDoJogador()
+    {
+        yield return new WaitForSeconds(1f);
+
+        for (int i = 0; i < 3; i++)
+        {
+            baralhoJogador.ProximaCartaAleatoria();
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+    public IEnumerator GeraCartasDoOponente()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            baralhoOponente.ProximaCartaAleatoriaOponente();
+            yield return new WaitForSeconds(0.5f);
+        }
     }
     public void ResetaMovimentoDasCartas()
     {
-        foreach(CartaDaCena cartaCena in bancoCartas.geralCartaCenaLista)
+        foreach(CartaDaCena cartaCena in baralhoOponente.deckOponente)
         {
             if (cartaCena != null) 
             {
@@ -130,7 +161,25 @@ public class ControlaTurnos : MonoBehaviour
             }
         }
 
-      
+        foreach (CartaDaCena cartaCena in baralhoJogador.deckJogador)
+        {
+            if (cartaCena != null)
+            {
+                cartaCena.SetMoveuSe(false);
+                cartaCena.SetPodeAtacar(true);
+            }
+        }
+    }
+
+    public void ResetaUltimoIDCasas()
+    {
+        foreach (Case casaB in ia_MapeamentoDeCases.listaCase)
+        {
+            if (casaB.GetUltimoID() != -1)
+            {
+                casaB.SetUltimoID(-1);
+            }
+        }
     }
     public void TelaTurnoJogador(bool _comando)
     {

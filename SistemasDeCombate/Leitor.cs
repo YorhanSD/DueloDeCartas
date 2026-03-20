@@ -4,11 +4,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+[System.Obsolete]
 public class Leitor : MonoBehaviour
 {
     [SerializeField] private Deck deck;
     [SerializeField] private SistemaCombate sC;
     [SerializeField] private Baralho baralho;
+    [SerializeField] private Baralho_Oponente baralhoOponente;
     [SerializeField] private BancoCards bancoCartas;
 
     [System.Obsolete]
@@ -17,18 +19,20 @@ public class Leitor : MonoBehaviour
         deck = FindObjectOfType<Deck>();
         sC = FindObjectOfType<SistemaCombate>();
         baralho = FindObjectOfType<Baralho>();
+        baralhoOponente = FindObjectOfType<Baralho_Oponente>();
         bancoCartas = FindObjectOfType<BancoCards>();
     }
 
     [System.Obsolete]
     public void OnTriggerEnter2D(Collider2D collision)
     {
+        /*
         if (collision.gameObject.tag != null && this.gameObject.tag == "Card Oponente")
         {
             CartaDaCena atacante = null;
             CartaDaCena defensor = null;
 
-            foreach (CartaDaCena carta in bancoCartas.geralCartaCenaLista)
+            foreach (CartaDaCena carta in baralhoOponente.deckOponente)
             {
                 if (carta.gameObject == collision.gameObject)
                     atacante = carta;
@@ -39,6 +43,7 @@ public class Leitor : MonoBehaviour
 
             if (atacante != null && defensor != null)
             {
+                Debug.Log($"Nome Defensor: {defensor.dados.nomeAtual} Defensor ID: {defensor.dados.ID} Nome Atacante: {atacante.dados.nomeAtual} Atacante ID: {atacante.dados.ID}");
                 sC.UmContraUm(defensor.dados.ID, atacante.dados.ID);
             }
 
@@ -49,7 +54,7 @@ public class Leitor : MonoBehaviour
             CartaDaCena atacante = null;
             CartaDaCena defensor = null;
 
-            foreach (CartaDaCena carta in bancoCartas.geralCartaCenaLista)
+            foreach (CartaDaCena carta in baralho.deckJogador)
             {
                 if (carta.gameObject == collision.gameObject)
                     atacante = carta;
@@ -60,10 +65,13 @@ public class Leitor : MonoBehaviour
 
             if (atacante != null && defensor != null)
             {
+                Debug.Log($"Nome Defensor: {defensor.dados.nomeAtual} Defensor ID: {defensor.dados.ID} Nome Atacante: {atacante.dados.nomeAtual} Atacante ID: {atacante.dados.ID}");
                 sC.UmContraUm(defensor.dados.ID, atacante.dados.ID);
             }
 
         }
+        */
 
     }
- }
+
+}

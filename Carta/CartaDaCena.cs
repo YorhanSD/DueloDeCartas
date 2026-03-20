@@ -7,6 +7,17 @@ using UnityEngine.EventSystems;
 
 public class CartaDaCena : MonoBehaviour
 {
+    public int printID;
+
+    public string printEspecie;
+    public string printNome;
+    public int printVidaMaxima;
+    public int printVida;
+    public int printAtaque;
+    public int printCouraca;
+    public int printReacao;
+    public int printLucidez;
+
     [SerializeField] private RectTransform reactTransform;
     [SerializeField] private Canvas _canvas;
     [SerializeField] private CanvasGroup canvasGroup;
@@ -40,46 +51,37 @@ public class CartaDaCena : MonoBehaviour
             Debug.LogError($"Canvas não encontrado para a carta {gameObject.name}");
         }
     }
-    void Start()
-    {
-        if (dados == null && cartaBase != null)
-        {
-            //dados = new CartaRuntime();
-            //dados.cartaOriginal = cartaBase;
-            //dados.Inicializar(GeradorID.GerarID());
-
-            //uiCarta = Instantiate(uiPrefab, uiParent);
-            //uiCarta.PegarDados(dados);
-        }
-    }
-    public static class GeradorID
-    {
-        //private static int idAtual = 0;
-        //public static int GerarID()
-        //{
-            //idAtual++;
-            //return idAtual;
-        //}
-    }
     public void GravaUI(CartaRuntime _cartaRuntime)
     {
-        uiCarta.nomeTMPRO.text = _cartaRuntime.nomeAtual;
-        uiCarta.barraVida.maxValue = _cartaRuntime.vidaMaxima;
-        uiCarta.barraVida.value = _cartaRuntime.vidaAtual;
-        uiCarta.ataqueTMPRO.text = _cartaRuntime.ataqueAtual.ToString();
+        uiCarta.AtualizarUI(_cartaRuntime);
+        //uiCarta.nomeTMPRO.text = _cartaRuntime.nome;
+        //uiCarta.vidaMaximaTMPRO.text = _cartaRuntime.vidaMaxima.ToString();
+        //uiCarta.vidaAtualTMPRO.text = _cartaRuntime.vidaAtual.ToString();
+        //uiCarta.ataqueTMPRO.text = $"AT {_cartaRuntime.ataqueAtual.ToString()}";
+        //uiCarta.couracaTMPRO.text = $"CO {_cartaRuntime.couraca.ToString()}";
+        //uiCarta.reacaoTMPRO.text = $"RE {_cartaRuntime.reacao.ToString()}";
+        //uiCarta.lucidezTMPRO.text = $"LU {_cartaRuntime.lucidez.ToString()}";
     }
-    public void Inicializar(CartaRuntime cartaRuntime, UICard _UI, Transform uiParent)
+    public void PrintaDados(CartaRuntime _cartaRuntime)
     {
-        dados = cartaRuntime;
-
-        //uiCarta = Instantiate(_UI, uiParent);
-        GravaUI(cartaRuntime);
-        //uiCarta.PegarDados(cartaRuntime);
-
-
-        Debug.Log($"UI criada para {cartaRuntime.nomeAtual}");
+        printID = _cartaRuntime.ID;
+        printEspecie = _cartaRuntime.especieSelecionada;
+        printNome = _cartaRuntime.nome;
+        printVidaMaxima = _cartaRuntime.vidaMaxima;
+        printVida = _cartaRuntime.vidaAtual;
+        printAtaque = _cartaRuntime.ataqueAtual;
+        printCouraca = _cartaRuntime.couraca;
+        printReacao = _cartaRuntime.reacao;
+        printLucidez = _cartaRuntime.lucidez;
     }
-
+    public void GravaDados(CartaRuntime _cartaRuntime)
+    {
+        //dados.ID = _cartaRuntime.ID;
+        //dados.nome = _cartaRuntime.nome;
+        //dados.vidaMaxima = _cartaRuntime.vidaMaxima;
+        //dados.vidaAtual = _cartaRuntime.vidaAtual;
+        //dados.ataqueAtual = _cartaRuntime.ataqueAtual;
+    }
     public void SetPodeAtacar(bool _atacou)
     {
         podeAtacar = _atacou;
@@ -105,13 +107,12 @@ public class CartaDaCena : MonoBehaviour
         moveuSe = _moveuSe;
     }
 
-
     public void OnTriggerEnter2D(Collider2D _casa)
     {        
         if(_casa.gameObject.tag == "Slot Player" && this.gameObject.tag != "Card Oponente")
         {
-            SetMoveuSe(true);
-            SetEstaAtivada(true);
+            //SetMoveuSe(true);
+            //SetEstaAtivada(true);
         }
     }
 }
