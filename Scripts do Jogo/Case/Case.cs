@@ -8,7 +8,8 @@ public class Case : MonoBehaviour
 {
     [HideInInspector] private CartaDaCena cartaOcupante;
 
-    IA_MapeamentoDeCases ia_MapeamentoDeCases;
+    [SerializeField] IA_MapeamentoDeCases ia_MapeamentoDeCases;
+    [SerializeField] Mapeamento_Jogador mapeamentoJogador;
 
     [SerializeField] SistemaCombate sistemaCombate;
     [SerializeField] BancoCards bancoCartas;
@@ -34,6 +35,7 @@ public class Case : MonoBehaviour
         bancoCartas = FindObjectOfType<BancoCards>();
         sistemaCombate = FindObjectOfType<SistemaCombate>();
         ia_MapeamentoDeCases = FindObjectOfType<IA_MapeamentoDeCases>();
+        mapeamentoJogador = FindObjectOfType<Mapeamento_Jogador>();
     }
     public void SetIDCartaOcupante(int _cartaID)
     {
@@ -117,17 +119,13 @@ public class Case : MonoBehaviour
         {
             if (GetCaseOcupadoJogador() == false && GetCaseOcupadoOponente() == false)
             {
-                if (cartaOcupante == null)
-                {
-                    //cartaOcupante = _cartaEntrando;
-                }
-                else if (cartaOcupante != _cartaEntrando)
-                {
-                    //sistemaCombate.UmContraUm(cartaOcupante.dados.ID, _cartaEntrando.dados.ID);
-                }
-
                 SetCaseOcupadoJogador(true);
                 SetIDCartaOcupante(cartaOcupante.dados.ID);
+
+                if (cartaOcupante != null)
+                {
+                    mapeamentoJogador.VerificaPossicaoAtualDaCartaDoJogador(cartaOcupante.dados.ID);
+                }
 
                 _cartaEntrando.transform.SetParent(this.transform, false);
                 _cartaEntrando.transform.localPosition = Vector3.zero;
@@ -140,14 +138,14 @@ public class Case : MonoBehaviour
         {
             if (GetCaseOcupadoJogador() == false && GetCaseOcupadoOponente() == false)
             {
-                if (cartaOcupante == null)
-                {
+                //if (cartaOcupante == null)
+                //{
                     //cartaOcupante = _cartaEntrando;
-                }
-                else if (cartaOcupante != _cartaEntrando)
-                {
+                //}
+                //else if (cartaOcupante != _cartaEntrando)
+                //{
                     //sistemaCombate.UmContraUm(cartaOcupante.dados.ID, _cartaEntrando.dados.ID);
-                }
+                //}
 
                 SetCaseOcupadoOponente(true);
                 SetIDCartaOcupante(cartaOcupante.dados.ID);

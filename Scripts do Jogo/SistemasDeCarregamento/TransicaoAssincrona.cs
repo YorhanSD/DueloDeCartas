@@ -21,7 +21,7 @@ public class TransicaoAssincrona : MonoBehaviour
     public IEnumerator CarregamentoAssincrono()
     {
         yield return new WaitForSeconds(5f);
-        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(salvaJogoPC.PersonagemSalvo().GetCampanhaPersonagem());
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(cena);
         while (!asyncOperation.isDone) {
             multiplicador = asyncOperation.progress * 100f;
             porcentagemCarregamento.text = multiplicador.ToString() + "%";

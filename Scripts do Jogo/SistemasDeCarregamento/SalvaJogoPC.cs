@@ -29,24 +29,19 @@ public class SalvaJogoPC : MonoBehaviour
 
     public void Salvar(SalvaEscolhaPersonagem _newSave)
     {
-        //if (jaSalvou == false)
-        //{
         _newSave.GetPersonagemEscolhido();
         _newSave.GetNomePersonagemEscolhido();
         _newSave.GetCampanhaPersonagem();
         SalvarJogoBinario(_newSave);
         SalvaEscolhaPersonagem personagemEscolhido = PersonagemSalvo();
-
-        //jaSalvou = true;
-        //}
     }
 
-    public void SalvaPersonagemEscolhido(int _id, string _nome, string _campanha, string _pais)
+    public void SalvaPersonagemEscolhido(int _id, string _nome, string _pais)
     {
         SalvaEscolhaPersonagem newSave = new SalvaEscolhaPersonagem();
         newSave.SetPersonagemEscolhido(_id);
         newSave.SetNomePersonagemEscolhido(_nome);
-        newSave.SetCampanhaPersonagem(_campanha);
+        //newSave.SetCampanhaPersonagem(_campanha);
         newSave.SetPais(_pais);
         Salvar(newSave);
     }

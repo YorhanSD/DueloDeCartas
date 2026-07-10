@@ -16,7 +16,7 @@ public class ControlaTurnos : MonoBehaviour
     //BancoCards bancoCartas;
 
     public bool turnoOponente;
-
+    Trava_Casas travaCasas;
     IA_MapeamentoDeCases ia_MapeamentoDeCases;
 
     Mapeamento_Jogador mapeamentoJogador;
@@ -38,14 +38,14 @@ public class ControlaTurnos : MonoBehaviour
         //bancoCartas = GetComponent<BancoCards>();
 
         sistemaDeCombate = GetComponent<SistemaCombate>();
-
+        travaCasas = GetComponent<Trava_Casas>();
         iaOponente = GetComponent<IA_Oponente>();
         cronometro = GetComponent<Cronometro>();
         mapeamentoJogador = GetComponent<Mapeamento_Jogador>();
         baralhoJogador = GetComponent<Baralho>();
         baralhoOponente = GetComponent<Baralho_Oponente>();
         StartCoroutine(GeraCartasDoJogador());
-        ia_MapeamentoDeCases = FindObjectOfType<IA_MapeamentoDeCases>();
+        ia_MapeamentoDeCases = GetComponent<IA_MapeamentoDeCases>();
         
     }
 
@@ -72,11 +72,14 @@ public class ControlaTurnos : MonoBehaviour
 
         ResetaUltimoIDCasas();
 
+        travaCasas.ResetaCasas();
+
         yield return new WaitForSeconds(1.5f);
 
         cronometro.tempoOponente = 120;
 
-        cronometro.StartCoroutine(cronometro.TemporizadorOponente());
+        cronometro.ParaCronometro_Jogador();
+        cronometro.IniciaCronometro_Oponente();
 
         telaturnoOponente.SetActive(false);
 
@@ -94,15 +97,11 @@ public class ControlaTurnos : MonoBehaviour
 
         Cursor.visible = false;
 
-
-
         yield return new WaitForSeconds(1f);
 
         iaOponente.ControleDeAcoes();
 
         yield return new WaitForSeconds(5f);
-
-        //mapeamentoJogador.VerificaPossicaoAtualDaCartaDoJogador();
 
         turnoOponente = false;
 
@@ -120,9 +119,14 @@ public class ControlaTurnos : MonoBehaviour
 
         cronometro.tempoJogador = 120;
 
+        cronometro.ParaCronometro_Oponente();
+        cronometro.IniciaCronometro_Jogador();
+
         ProximaCartaJogador();
 
         numeroTurno++;
+
+        baralhoOponente.casaReferenciaDeMenorPosicao = 10;
     }
     public void ProximaCartaJogador()
     {

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 //FAZ A CARTA SE MOVER COM O PONTEIRO DO MOUSE, BASTA COLOCAR ESTE SCRIPT NA CARTA
@@ -8,6 +9,7 @@ using UnityEngine.EventSystems;
 public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
     public GameObject resetPoint;
+    [SerializeField] Efeitos_Visuais eV;
 
     [SerializeField] private RectTransform _transform;
     [SerializeField] private Canvas _canvas;
@@ -32,11 +34,12 @@ public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, 
         trocaLugar = GetComponent<TrocaLugar>();
         cartaDaCena = GetComponent<CartaDaCena>();
         sistemaCombate = FindObjectOfType<SistemaCombate>();
-
+        eV = FindObjectOfType<Efeitos_Visuais>();
         _transform = GetComponent<RectTransform>();
         _canvasGroup = GetComponent<CanvasGroup>();
         canvas = GetComponentInParent<Canvas>();
         bancoCartas = FindObjectOfType<BancoCards>();
+
     }
     
 
@@ -54,9 +57,16 @@ public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, 
         _canvasGroup.alpha = 0.5f;
         _canvasGroup.blocksRaycasts = false;
 
-        //Debug.Log("Inicio");
         selecionou = true;
-        //Debug.Log($"Carta {gameObject.name} selecionada");
+
+        if(cartaDaCena.GetEstaAtivada() == false) 
+        {
+            chamaPiscador();
+        }
+    }
+    public void chamaPiscador()
+    {
+        eV.ativaPisca_Pisca();
     }
     public void OnEndDrag(PointerEventData eventData)
     {
@@ -89,9 +99,8 @@ public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, 
     }
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Zona Restritiva")
+        if (collision.gameObject.tag == "Bloqueador")
         {
-            this.transform.parent = resetPoint.transform;
             this.transform.position = resetPoint.transform.position;
         }
 

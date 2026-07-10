@@ -19,6 +19,10 @@ public class CartaOriginal: ScriptableObject
 
     public Especies especie;
 
+    public bool especieDominante;
+
+    public bool especieRecessiva;
+
     public string nome;
 
     public int vida;
@@ -29,6 +33,7 @@ public class CartaOriginal: ScriptableObject
 
     public int couraca; // quando chega a 0 a criatura recebe 100 % do ataque oponente, em vez de 50 %
                         // diminui em 10 para cada ataque sofrido
+    public int couracaMaxima;
 
     public int reacao;  // capacidade de dano que a criatura tem de revidar ao alvo que ataca ela.
 

@@ -21,6 +21,10 @@ public class IA_Oponente : MonoBehaviour
 
     [SerializeField] private int guardaIDCartaComMenorAtaque;
 
+    [SerializeField] private int guardaIDCartaComMenorCouraca;
+
+    [SerializeField] private int guardaIDCartaComMaiorCouraca;
+
     public bool iaPodeAtacar = false;
 
     [System.Obsolete]
@@ -32,7 +36,22 @@ public class IA_Oponente : MonoBehaviour
         baralhoOponente = GetComponent<Baralho_Oponente>();
         baralhoJogador = GetComponent<Baralho>();
     }
-
+    public void SetCartaIDComMenorCouraca(int _cartaID)
+    {
+        guardaIDCartaComMenorCouraca = _cartaID;
+    }
+    public void SetCartaIDComMaiorCouraca(int _cartaID)
+    {
+        guardaIDCartaComMaiorCouraca = _cartaID;
+    }
+    public int GetCartaIDComMaiorCouraca()
+    {
+        return guardaIDCartaComMaiorCouraca;
+    }
+    public int GetCartaIDComMenorCouraca()
+    {
+        return guardaIDCartaComMenorCouraca;
+    }
     public void SetCartaIDComMenosAtaque(int _cartaID)
     {
         guardaIDCartaComMenorAtaque = _cartaID;
@@ -49,6 +68,7 @@ public class IA_Oponente : MonoBehaviour
     {
         return guardaIDCartaComMaiorAtaque;
     }
+
     public void ControleDeAcoes()
     {
         if (controlaTurnos == true)
@@ -79,6 +99,7 @@ public class IA_Oponente : MonoBehaviour
             else
             {
                 VerificaMovimento();
+
                 Debug.Log("Jogador não possui cartas ativas");
             }
         }
@@ -86,7 +107,8 @@ public class IA_Oponente : MonoBehaviour
 
     public void VerificaCartaDoJogador(CartaDaCena _cartaAtiva)
     {
-        SetCartaIDComMenosAtaque(_cartaAtiva.dados.ID);
+        //SetCartaIDComMenosAtaque(_cartaAtiva.dados.ID);
+        SetCartaIDComMenorCouraca(_cartaAtiva.dados.ID);
 
         VerificaAtaque(_cartaAtiva);
 
@@ -139,10 +161,10 @@ public class IA_Oponente : MonoBehaviour
     {
 
         CartaDaCena cartaOponente = baralhoOponente.deckOponente.Find(c => c.dados.ID == GetCartaIDComMaiorAtaque());
-        CartaDaCena cartaJogador = baralhoJogador.deckJogador.Find(c => c.dados.ID == GetCartaIDComMenosAtaque());
+        CartaDaCena cartaJogador = baralhoJogador.deckJogador.Find(c => c.dados.ID == GetCartaIDComMenorCouraca());
 
         Case _casaOponente = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == GetCartaIDComMaiorAtaque());
-        Case _casaJogador = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == GetCartaIDComMenosAtaque());
+        Case _casaJogador = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == GetCartaIDComMenorCouraca());
 
         if (_casaJogador != null && _casaOponente != null)
         {

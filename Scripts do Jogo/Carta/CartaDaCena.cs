@@ -70,7 +70,7 @@ public class CartaDaCena : MonoBehaviour
         printVidaMaxima = _cartaRuntime.vidaMaxima;
         printVida = _cartaRuntime.vidaAtual;
         printAtaque = _cartaRuntime.ataqueAtual;
-        printCouraca = _cartaRuntime.couraca;
+        printCouraca = _cartaRuntime.couracaAtual;
         printReacao = _cartaRuntime.reacao;
         printLucidez = _cartaRuntime.lucidez;
     }

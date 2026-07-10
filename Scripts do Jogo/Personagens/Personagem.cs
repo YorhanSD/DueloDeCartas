@@ -1,4 +1,3 @@
-using Microsoft.Unity.VisualStudio.Editor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +9,7 @@ public class Personagem : MonoBehaviour
 
     public string nome;
 
-    public string campanha;
+    //public string campanha;
 
     public string pais;
 

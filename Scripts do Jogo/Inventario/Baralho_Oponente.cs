@@ -20,6 +20,8 @@ public class Baralho_Oponente : MonoBehaviour
     public int casaReferenciaDeMenorPosicao = 10;
     public Transform casaTransform;
 
+    bool naoHaCasasDisponiveis;
+
     public void Start()
     {
         bancoCartas = GetComponent<BancoCards>();
@@ -28,14 +30,12 @@ public class Baralho_Oponente : MonoBehaviour
 
     public void ProximaCartaAleatoriaOponente()
     {
-        numeroAleatorio = UnityEngine.Random.Range(0, 3);
+        numeroAleatorio = Random.Range(0, 3);
 
         ChecaCasasVazias(numeroAleatorio);
     }
     public void ChecaCasasVazias(int _numeroAleatorio)
     {
-        casaReferenciaDeMenorPosicao = 10;
-
         foreach (Case _casa in casesOponente)
         {
             if (_casa.GetCaseOcupadoOponente() == true || _casa.GetCaseOcupadoJogador() == true)
@@ -45,23 +45,34 @@ public class Baralho_Oponente : MonoBehaviour
                 if (casaReferenciaDeMenorPosicao < 14)
                 {
                     casaReferenciaDeMenorPosicao++;
+
+                    naoHaCasasDisponiveis = true;
                 }
             }
             else
             {
+                Debug.Log("Há casas disponíveis");
+
+                naoHaCasasDisponiveis = false;
+
+                Case _casaEscolhida = casesOponente.Find(c => c.GetPosicaoCasa() == casaReferenciaDeMenorPosicao);
+
+                DefinePosicaoDaCarta(_casaEscolhida.transform, _numeroAleatorio);
+
                 break;
             }
         }
 
-        Case _casaEscolhida = casesOponente.Find(c => c.GetPosicaoCasa() == casaReferenciaDeMenorPosicao);
-        //casaTransform = _casaEscolhida.transform;
-        DefinePosicaoDaCarta(_casaEscolhida.transform, _numeroAleatorio);
+        
     }
     public void DefinePosicaoDaCarta(Transform _posicaoCasa, int _numeroSortiado)
     {
-        CartaDaCena cartaClone = Instantiate(cenaTemp[_numeroSortiado], _posicaoCasa, false);
+        if (naoHaCasasDisponiveis == false)
+        {
+            CartaDaCena cartaClone = Instantiate(cenaTemp[_numeroSortiado], _posicaoCasa, false);
 
-        CriaDuplicata(_numeroSortiado, cartaClone);
+            CriaDuplicata(_numeroSortiado, cartaClone);
+        }
     }
     public void CriaDuplicata(int _numeroSortiado, CartaDaCena cartaClone)
     {
@@ -73,6 +84,7 @@ public class Baralho_Oponente : MonoBehaviour
 
         cartaClone.GravaUI(cartaRuntime);
         cartaClone.PrintaDados(cartaRuntime);
+
         //cartaClone.uiCarta.AtualizarUI(cartaClone.dados);
 
         //cartaClone.GravaDados(cartaRuntime);

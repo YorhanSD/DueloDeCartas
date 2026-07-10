@@ -10,7 +10,8 @@ public class CartaRuntime
     public int ataqueAtual;
     public int vidaAtual;
     public int vidaMaxima;
-    public int couraca;
+    public int couracaAtual;
+    public int couracaMaxima;
     public int reacao;
     public int lucidez;
 
@@ -26,7 +27,8 @@ public class CartaRuntime
         ataqueAtual = cartaOriginal.ataque;
         vidaAtual = cartaOriginal.vida;
         vidaMaxima = cartaOriginal.vidaMaxima;
-        couraca = cartaOriginal.couraca;
+        couracaAtual = cartaOriginal.couraca;
+        couracaMaxima = cartaOriginal.couracaMaxima;
         reacao = cartaOriginal.reacao;
         lucidez = cartaOriginal.lucidez;
     }

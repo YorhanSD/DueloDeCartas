@@ -12,36 +12,70 @@ public class Cronometro : MonoBehaviour
     public float tempoOponente;
     public TextMeshProUGUI tempoTextoOponente;
 
+    private Coroutine cronometroJogador;
+    private Coroutine cronometroOponente;
+
     void Start()
     {
         tempoJogador = 120;
         tempoOponente = 120;
 
-        StartCoroutine(TemporizadorJogador());
+        IniciaCronometro_Jogador();
     }
 
     void Update()
     {
         tempoTextoJogador.text = tempoJogador.ToString();
         tempoTextoOponente.text = tempoOponente.ToString();
+        
+    }
 
+    public void IniciaCronometro_Jogador()
+    {
+        if (cronometroJogador == null)
+        {
+            cronometroJogador = StartCoroutine(TemporizadorJogador());
+        }
+    }
+    public void ParaCronometro_Jogador()
+    {
+        if (cronometroJogador != null)
+        {
+            StopCoroutine(cronometroJogador);
+            cronometroJogador = null;
+        }
+    }
+    public void IniciaCronometro_Oponente()
+    {
+        if (cronometroOponente == null)
+        {
+            cronometroOponente = StartCoroutine(TemporizadorOponente());
+        }
+    }
+    public void ParaCronometro_Oponente()
+    {
+        if (cronometroOponente != null)
+        {
+            StopCoroutine(cronometroOponente);
+            cronometroOponente = null;
+        }
     }
 
     public IEnumerator TemporizadorJogador()
     {
-        for (int i = 1; 120 >= i;)
+        while (tempoJogador > 0)
         {
             yield return new WaitForSeconds(1f);
-            tempoJogador -= 1;
+            tempoJogador--;
         }
     }
 
     public IEnumerator TemporizadorOponente()
     {
-        for (int i = 1; 120 >= i;)
+        while (tempoOponente > 0)
         {
             yield return new WaitForSeconds(1f);
-            tempoOponente -= 1;
+            tempoOponente--;
         }
     }
 }
