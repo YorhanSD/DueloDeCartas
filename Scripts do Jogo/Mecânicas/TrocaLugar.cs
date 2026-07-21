@@ -1,44 +1,80 @@
+using System.Collections;
 using UnityEngine;
 
 public class TrocaLugar : MonoBehaviour
 {
-    MoveCarta moveCarta;
-    IA_MapeamentoDeCases ia_MapeamentoDeCases;
+    public IA_MapeamentoDeCases ia_MapeamentoDeCases;
+    public Trava_Casas travaCasas;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private bool verificaSeSoltou;
+
     [System.Obsolete]
     void Start()
     {
-        moveCarta = GetComponent<MoveCarta>();
-        ia_MapeamentoDeCases = FindObjectOfType<IA_MapeamentoDeCases>();
+        travaCasas = GetComponent<Trava_Casas>();
+        ia_MapeamentoDeCases = GetComponent<IA_MapeamentoDeCases>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetVerificaSoltouCarta(bool _verificaSeSoltou)
     {
-        
+        verificaSeSoltou = _verificaSeSoltou;
+    }
+
+    public bool GetVerificaSoltou()
+    {
+        return verificaSeSoltou;
     }
 
     public void VerificaPosicaoDasCartas(CartaDaCena _retaguarda, CartaDaCena _vanguarda)
     {
-        //REGRAS:
+        Debug.Log($"A carta de retaguarda é : {_retaguarda.dados.nome}");
+        Debug.Log($"A carta da vanguarda é : {_vanguarda.dados.nome}");
 
-        //CARTA RETAGUARDA, FOI COLOCADA AGORA.
-        //TEM QUE ESTAR ATRAS DA VANGUARDA
-
-        //CARTA VANGUARDA, FOI COLOCADA ANTES.
-        //TEM QUE ESTAR A FRANTE DA RETAGUARDA
-
-        if(_retaguarda.GetMoveuSe() == true && _vanguarda.GetMoveuSe() == false && moveCarta.selecionou == true && moveCarta.encostouEmOutraCartaSua == true)
+        if (GetVerificaSoltou() == true)
         {
-            //Case _casaAvancada = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == _vanguarda.dados.ID);
-            //Case _casaRecuada = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == _retaguarda.dados.ID);
+            foreach (Case casa in ia_MapeamentoDeCases.listaCase)
+            {
+                if (casa.GetIDCartaOcupante() == _vanguarda.dados.ID && _vanguarda.GetEstaAtivada() == true)
+                {
+                    _vanguarda.transform.SetParent(_retaguarda.gameObject.transform, false);
+                    _vanguarda.transform.localPosition = Vector3.zero;
 
-            _retaguarda.transform.SetParent(_vanguarda.gameObject.transform, false);
-            _retaguarda.transform.localPosition = Vector3.zero;
+                    _retaguarda.transform.SetParent(casa.gameObject.transform, false);
+                    _retaguarda.transform.localPosition = Vector3.zero;
 
-            _vanguarda.transform.SetParent(_retaguarda.gameObject.transform, false);
-            _vanguarda.transform.localPosition = Vector3.zero;
+                    StartCoroutine(aguardaMovimento(casa, _retaguarda, _vanguarda));
+
+                    break;
+                }
+            }
         }
+    }
+
+    public IEnumerator aguardaMovimento(Case casa, CartaDaCena _retaguarda, CartaDaCena _vanguarda)
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        //casa.OcuparCasa(_retaguarda);
+
+        foreach (Case _casa in ia_MapeamentoDeCases.listaCase)
+        {
+            if (_casa.GetIDCartaOcupante() == _vanguarda.dados.ID) // Pega a posição da carta que estava no lugar
+            {
+                travaCasas.BloqueiaCasas(_casa.GetPosicaoCasa());
+            }
+        }
+
+        //travaCasas.BloqueiaCasas(casa.GetPosicaoCasa());
+
+        //travaCasas.BloqueiaCasas(casa.GetPosicaoCasa());
+
+        //break;
+        //}
+        //}
+
+        //yield return new WaitForSeconds(0.4f);
+
+        //_vanguarda.SetMoveuSe(false);
+        //_vanguarda.SetPodeAtacar(true);
     }
 }

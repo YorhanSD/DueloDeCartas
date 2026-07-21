@@ -11,9 +11,9 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
     Baralho_Oponente baralhoOponente;
 
-    SistemaCombate sistemaCombate;
+    public SistemaCombate sistemaCombate;
 
-    Deck deck;
+    public Trava_Casas travaCasas;
 
     int numeroDeCasas = 16;
 
@@ -24,18 +24,17 @@ public class IA_MapeamentoDeCases : MonoBehaviour
     [System.Obsolete]
     private void Start()
     {
+        travaCasas = GetComponent<Trava_Casas>();
+
         baralhoOponente = GetComponent<Baralho_Oponente>();
 
         bancoCartas = GetComponent<BancoCards>();
 
         sistemaCombate = FindObjectOfType<SistemaCombate>();
 
-        deck = GetComponent<Deck>();
-
         ai_Oponente = GetComponent<IA_Oponente>();
 
         NumeradorDasCasas();
-
     }
     public void NumeradorDasCasas()
     {
@@ -76,9 +75,9 @@ public class IA_MapeamentoDeCases : MonoBehaviour
     }
 
     //VERIFICAR POSICAO DAS CASAS!
-    public void MovimentosPossiveis(int _possicaoCase, CartaDaCena _carta)
+    public void MovimentosPossiveis(int _posicaoCasa, CartaDaCena _carta)
     {
-        switch (_possicaoCase)
+        switch (_posicaoCasa)
         {
             //SE ESTIVER NA CASA 13, A CARTA PODE SE MOVER ATÉ A CASA 11
             case 13:
@@ -87,6 +86,7 @@ public class IA_MapeamentoDeCases : MonoBehaviour
                 {
                     _carta.transform.SetParent(listaCase[11].gameObject.transform, false);
                     _carta.transform.localPosition = Vector3.zero;
+                    
 
                     _carta.SetMoveuSe(true);
 
@@ -324,7 +324,7 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[11].GetCaseOcupadoOponente() == false && listaCase[11].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[13].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque();
+                    ai_Oponente.Ataque(_carta, listaCase[11]);
                 }
 
                 break;
@@ -334,7 +334,7 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[10].GetCaseOcupadoOponente() == false && listaCase[10].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[12].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque();
+                    ai_Oponente.Ataque(_carta, listaCase[10]);
                 }
 
                 break;
@@ -343,7 +343,7 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[9].GetCaseOcupadoOponente() == false && listaCase[9].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[11].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque();
+                    ai_Oponente.Ataque(_carta, listaCase[9]);
                 }
 
                 break;
@@ -353,7 +353,7 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[8].GetCaseOcupadoOponente() == false && listaCase[8].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[10].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque();
+                    ai_Oponente.Ataque(_carta, listaCase[8]);
                 }
                
                 break;
@@ -362,7 +362,7 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[6].GetCaseOcupadoOponente() == false && listaCase[6].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[8].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque();
+                    ai_Oponente.Ataque(_carta, listaCase[6]);
                 }
                 
 
@@ -373,7 +373,7 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[7].GetCaseOcupadoOponente() == false && listaCase[7].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[9].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque();
+                    ai_Oponente.Ataque(_carta, listaCase[7]);
                 }
                 
                 break;
@@ -410,7 +410,7 @@ public class IA_MapeamentoDeCases : MonoBehaviour
                 if (listaCase[0].GetCaseOcupadoOponente() == false && listaCase[0].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[2].GetIDCartaOcupante())
                 {
 
-                    ai_Oponente.Ataque();
+                    ai_Oponente.Ataque(_carta, listaCase[0]);
                 }
                
 
@@ -421,7 +421,7 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[1].GetCaseOcupadoOponente() == false && listaCase[1].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[3].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque();
+                    ai_Oponente.Ataque(_carta, listaCase[1]);
                 }
                 
 
@@ -432,7 +432,7 @@ public class IA_MapeamentoDeCases : MonoBehaviour
                 if (listaCase[2].GetCaseOcupadoOponente() == false && listaCase[2].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[4].GetIDCartaOcupante())
                 {
 
-                    ai_Oponente.Ataque();
+                    ai_Oponente.Ataque(_carta, listaCase[2]);
                 }
                 
 
@@ -443,7 +443,7 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[3].GetCaseOcupadoOponente() == false && listaCase[3].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[5].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque();
+                    ai_Oponente.Ataque(_carta, listaCase[3]);
                 }
                 
 

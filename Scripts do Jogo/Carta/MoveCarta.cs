@@ -8,41 +8,62 @@ using UnityEngine.EventSystems;
 //DEVE SER COLOCADO SOMENTE NAS CARTAS QUE SÃO CONTROLADAS PELO JOGADOR
 public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
-    public GameObject resetPoint;
-    [SerializeField] Efeitos_Visuais eV;
+    public GameObject resetaPosicao;
+    [SerializeField] Efeitos_Visuais efeitosVisuais;
+
+    IA_MapeamentoDeCases iaMapeamentoDeCases;
 
     [SerializeField] private RectTransform _transform;
     [SerializeField] private Canvas _canvas;
     [SerializeField] private CanvasGroup _canvasGroup;
 
-    public bool selecionou = false;
-    public bool encostouEmOutraCartaSua = false;
-    public bool soltou = false;
+    [SerializeField] private bool selecionou = false;
+    public bool encostouEmOutraCarta = false;
+    [SerializeField] private bool soltou = false;
 
     private Canvas canvas;
 
     SistemaCombate sistemaCombate;
-    [SerializeField] CartaDaCena cartaDaCena;
-    [SerializeField] TrocaLugar trocaLugar;
-    BancoCards bancoCartas;
+
+    public CartaDaCena cartaDaCena;
+    TrocaLugar trocaLugar;
+
+    Baralho baralho;
+
+    //BancoCards bancoCartas;
 
     [System.Obsolete]
     void Awake()
     {
         //NÃO PODEMOS USAR FINDOBJECTOFTYPE PARA OBJETOS QUE SERÃO INSTANCIADOS
 
-        trocaLugar = GetComponent<TrocaLugar>();
-        cartaDaCena = GetComponent<CartaDaCena>();
+        iaMapeamentoDeCases = FindObjectOfType<IA_MapeamentoDeCases>();
+        efeitosVisuais = FindObjectOfType<Efeitos_Visuais>();
         sistemaCombate = FindObjectOfType<SistemaCombate>();
-        eV = FindObjectOfType<Efeitos_Visuais>();
+        baralho = FindObjectOfType<Baralho>();
+
+        trocaLugar = FindObjectOfType<TrocaLugar>();
+        cartaDaCena = GetComponent<CartaDaCena>();
         _transform = GetComponent<RectTransform>();
         _canvasGroup = GetComponent<CanvasGroup>();
         canvas = GetComponentInParent<Canvas>();
-        bancoCartas = FindObjectOfType<BancoCards>();
-
     }
-    
-
+    public void SetSoltouCarta(bool _soltou)
+    {
+        soltou = _soltou;
+    }
+    public bool GetSoltouCarta()
+    {
+        return soltou;
+    }
+    public void SetSelecinouCarta(bool _selecinou)
+    {
+        selecionou = _selecinou;
+    }
+    public bool GetSelecinouCarta()
+    {
+        return selecionou;
+    }
     public void SetCartaDaCena(CartaDaCena _cartaDaCena)
     {
         cartaDaCena = _cartaDaCena;
@@ -57,24 +78,25 @@ public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, 
         _canvasGroup.alpha = 0.5f;
         _canvasGroup.blocksRaycasts = false;
 
-        selecionou = true;
+        SetSelecinouCarta(true);
 
         if(cartaDaCena.GetEstaAtivada() == false) 
         {
-            chamaPiscador();
+            //chamaPiscador();
         }
     }
     public void chamaPiscador()
     {
-        eV.ativaPisca_Pisca();
+        //efeitosVisuais.ativaPisca_Pisca();
     }
     public void OnEndDrag(PointerEventData eventData)
     {
         _canvasGroup.alpha = 1f;
         _canvasGroup.blocksRaycasts = true;
 
-        //soltou = true;
-        //selecionou = false;
+        SetSelecinouCarta(false);
+        SetSoltouCarta(true);
+        trocaLugar.SetVerificaSoltouCarta(GetSoltouCarta());
         //Debug.Log("Soltou");
     }
 
@@ -99,21 +121,30 @@ public class MoveCarta : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, 
     }
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Bloqueador")
+        if (collision.gameObject.tag == "Bloqueador" && this.gameObject.CompareTag("Carta Jogador"))
         {
-            this.transform.position = resetPoint.transform.position;
+            this.transform.SetParent(resetaPosicao.transform, false);
+            this.transform.localPosition = Vector3.zero;
         }
 
-        if(collision.CompareTag("Card Player") && selecionou == true)
+        if(collision.CompareTag("Carta Jogador") && GetSelecinouCarta() == true)
         {
-            encostouEmOutraCartaSua = true;
+            encostouEmOutraCarta = true;
 
-            //Debug.Log($"{gameObject.name} encostou na carta {collision.gameObject.name}");
+            CartaDaCena recebeCarta = collision.GetComponent<CartaDaCena>();
 
-            CartaDaCena cartaRetaguarda = bancoCartas.geralCartaCenaLista.Find(c => c.dados.nome == collision.gameObject.name);
-            CartaDaCena cartaVanguarda = bancoCartas.geralCartaCenaLista.Find(c => c.dados.nome == this.gameObject.name);
-            //trocaLugar.VerificaPosicaoDasCartas(cartaRetaguarda, cartaVanguarda);
-            //Debug.Log("Troca em desenvolvimento!");
+            Debug.Log($"Você está encostando na carta : {recebeCarta.dados.nome}");
+            Debug.Log($"A carta que você está segurando é : {cartaDaCena.dados.nome}");
+
+            cartaDaCena = baralho.deckJogador.Find(c => c.dados.ID == cartaDaCena.dados.ID);
+
+            trocaLugar.VerificaPosicaoDasCartas(recebeCarta, cartaDaCena);
+        }
+        else
+        {
+            encostouEmOutraCarta = false;
         }
     }
+
+    
 }

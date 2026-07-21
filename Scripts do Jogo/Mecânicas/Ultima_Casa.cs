@@ -12,12 +12,12 @@ public class Ultima_Casa : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D _carta)
     {
-        if (_carta.gameObject.tag == "Card Oponente")
+        if (_carta.gameObject.tag == "Carta Oponente" && this.gameObject.name == "Casa 0" || _carta.gameObject.tag == "Carta Oponente" && this.gameObject.name == "Casa 1")
         {
             regrasJogo.AtivaTela_Derrota();
         }
 
-        if (_carta.gameObject.tag == "Card Player")
+        if (_carta.gameObject.tag == "Carta Jogador" && this.gameObject.name == "Casa 14" || _carta.gameObject.tag == "Carta Jogador" && this.gameObject.name == "Casa 15")
         {
             regrasJogo.AtivaTela_Vitoria();
         }

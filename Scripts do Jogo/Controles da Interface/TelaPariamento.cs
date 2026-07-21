@@ -11,7 +11,12 @@ public class TelaPariamento : MonoBehaviour
 
     public TextMeshProUGUI pais;
 
+    public TextMeshProUGUI nomeOponente;
+
+    public TextMeshProUGUI paisOponente;
+
     public GameObject[] fotos;
+    public GameObject[] fotosOponentes;
 
     SalvaJogoPC salvaJogoPC;
 
@@ -24,6 +29,10 @@ public class TelaPariamento : MonoBehaviour
             mudaFoto(salvaJogoPC.PersonagemSalvo().GetPersonagemEscolhido());
             mudaNome(salvaJogoPC.PersonagemSalvo().GetNomePersonagemEscolhido());
             mudaPais(salvaJogoPC.PersonagemSalvo().GetPais());
+
+            mudaFotoOponente(salvaJogoPC.OponenteSalvo().GetOponenteEscolhido());
+            mudaNomeOponente(salvaJogoPC.OponenteSalvo().GetNomeOponenteEscolhido());
+            mudaPaisOponente(salvaJogoPC.OponenteSalvo().GetPais());
         }
         else
         {
@@ -44,12 +53,33 @@ public class TelaPariamento : MonoBehaviour
             nome.text = _nome;
         }
     }
-
     public void mudaPais(string _pais)
     {
         if (pais != null)
         {
             pais.text = _pais;
+        }
+    }
+
+    public void mudaFotoOponente(int _idOponente)
+    {
+        if (fotosOponentes != null)
+        {
+            fotosOponentes[_idOponente].SetActive(true);
+        }
+    }
+    public void mudaNomeOponente(string _nomeOponente)
+    {
+        if (nomeOponente != null)
+        {
+            nomeOponente.text = _nomeOponente;
+        }
+    }
+    public void mudaPaisOponente(string _paisOponente)
+    {
+        if (paisOponente != null)
+        {
+            paisOponente.text = _paisOponente;
         }
     }
 }

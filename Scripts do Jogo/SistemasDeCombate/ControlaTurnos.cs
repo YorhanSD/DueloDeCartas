@@ -44,9 +44,10 @@ public class ControlaTurnos : MonoBehaviour
         mapeamentoJogador = GetComponent<Mapeamento_Jogador>();
         baralhoJogador = GetComponent<Baralho>();
         baralhoOponente = GetComponent<Baralho_Oponente>();
-        StartCoroutine(GeraCartasDoJogador());
         ia_MapeamentoDeCases = GetComponent<IA_MapeamentoDeCases>();
-        
+
+        StartCoroutine(GeraCartasDoJogador());
+
     }
 
     public void Update()
@@ -72,9 +73,11 @@ public class ControlaTurnos : MonoBehaviour
 
         ResetaUltimoIDCasas();
 
-        travaCasas.ResetaCasas();
+        //travaCasas.ResetaCasas();
 
-        yield return new WaitForSeconds(1.5f);
+        baralhoOponente.casaReferenciaDeMenorPosicao = 12;
+
+        yield return new WaitForSeconds(1f);
 
         cronometro.tempoOponente = 120;
 
@@ -92,7 +95,7 @@ public class ControlaTurnos : MonoBehaviour
 
         if (numeroTurno > 3)
         {
-            ProximaCartaOponente();
+            //ProximaCartaOponente();
         }
 
         Cursor.visible = false;
@@ -101,9 +104,11 @@ public class ControlaTurnos : MonoBehaviour
 
         iaOponente.ControleDeAcoes();
 
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(3f);
 
         turnoOponente = false;
+
+        //==========TURNO JOGADOR==========//
 
         TelaTurnoJogador(true);
 
@@ -111,7 +116,7 @@ public class ControlaTurnos : MonoBehaviour
 
         botaoPassaTurno.SetActive(true);
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1f);
 
         TelaTurnoJogador(false);
 
@@ -122,27 +127,24 @@ public class ControlaTurnos : MonoBehaviour
         cronometro.ParaCronometro_Oponente();
         cronometro.IniciaCronometro_Jogador();
 
-        ProximaCartaJogador();
+        //ProximaCartaJogador();
 
         numeroTurno++;
-
-        baralhoOponente.casaReferenciaDeMenorPosicao = 10;
     }
     public void ProximaCartaJogador()
     {
-        baralhoJogador.ProximaCartaAleatoria();
+        //baralhoJogador.NumeroAleatorio();
     }
     public void ProximaCartaOponente()
     {
-        baralhoOponente.ProximaCartaAleatoriaOponente();
+        //baralhoOponente.ProximaCartaAleatoriaOponente();
     }
     public IEnumerator GeraCartasDoJogador()
     {
-        yield return new WaitForSeconds(1f);
-
         for (int i = 0; i < 3; i++)
         {
-            baralhoJogador.ProximaCartaAleatoria();
+            yield return new WaitForSeconds(0.5f);
+            baralhoJogador.NumeroAleatorio();
             yield return new WaitForSeconds(0.5f);
         }
     }
@@ -150,6 +152,7 @@ public class ControlaTurnos : MonoBehaviour
     {
         for (int i = 0; i < 3; i++)
         {
+            yield return new WaitForSeconds(0.5f);
             baralhoOponente.ProximaCartaAleatoriaOponente();
             yield return new WaitForSeconds(0.5f);
         }

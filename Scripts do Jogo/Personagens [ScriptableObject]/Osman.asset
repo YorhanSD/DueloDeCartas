@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f02fb33842650843ae334c7349856d5, type: 3}
+  m_Name: Osman
+  m_EditorClassIdentifier: Assembly-CSharp::Personagem
+  id: 2
+  fotoPersonagem: {fileID: 0}
+  nome: Osman
+  sobrinome: "Kili\xE7"
+  idade: 27
+  profissao: "Psic\xF3golo"
+  pais: Turquia
+  lore: "Ele \xE9 conhecido por ser um competidor misterioso, \xE9 recluso, e tenta
+    ao m\xE1ximo esconder suas estrat\xE9gias de jogo, com isso, treina sozinho e
+    recussa qualquer assist\xEAncia, mesmo que essa o favore\xE7a. Pouco sabe-se
+    sobre sua vida, mas os oponentes que o enfrentam, dizem que seu temperamento
+    \xE9 explosivo e sua estrategia \xE9 mental. Contam que quando o enfrentam, se
+    sentem intimidados, visto que ele tenta ao m\xE1ximo te incurralar, para que
+    voc\xEA se perca no seu pr\xF3prio jogo.\r\n"
+  elencoDominante: Tenebroso
+  elencoRecessivo: 0

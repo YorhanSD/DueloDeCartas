@@ -31,18 +31,38 @@ public class SalvaJogoPC : MonoBehaviour
     {
         _newSave.GetPersonagemEscolhido();
         _newSave.GetNomePersonagemEscolhido();
-        _newSave.GetCampanhaPersonagem();
         SalvarJogoBinario(_newSave);
         SalvaEscolhaPersonagem personagemEscolhido = PersonagemSalvo();
     }
+ 
+    public void SalvaOponente(SalvaOponente _newSave)
+    {
+        _newSave.GetOponenteEscolhido();
+        _newSave.GetOponenteEscolhido();
+        SalvaOponenteBinario(_newSave);
+        SalvaOponente oponenteEscolhido = OponenteSalvo();
+    }
 
-    public void SalvaPersonagemEscolhido(int _id, string _nome, string _pais)
+    public void SalvaOponenteEscolhido(int _id, bool _eOponente, string _nome, string _pais, string _especieRecessiva, string _especieDominante)
+    {
+        SalvaOponente newSave = new SalvaOponente();
+        newSave.SetOponenteEscolhido(_id);
+        newSave.SetEOponente(_eOponente);
+        newSave.SetNomeOponenteEscolhido(_nome);
+        newSave.SetPais(_pais);
+        newSave.SetEspecieRecessiva(_especieRecessiva);
+        newSave.SetEspecieDominente(_especieDominante);
+        SalvaOponente(newSave);
+    }
+ 
+    public void SalvaPersonagemEscolhido(int _id, string _nome, string _pais, string _especieRecessiva, string _especieDominante)
     {
         SalvaEscolhaPersonagem newSave = new SalvaEscolhaPersonagem();
         newSave.SetPersonagemEscolhido(_id);
         newSave.SetNomePersonagemEscolhido(_nome);
-        //newSave.SetCampanhaPersonagem(_campanha);
         newSave.SetPais(_pais);
+        newSave.SetEspecieRecessiva(_especieRecessiva);
+        newSave.SetEspecieDominente(_especieDominante);
         Salvar(newSave);
     }
 
@@ -52,15 +72,30 @@ public class SalvaJogoPC : MonoBehaviour
 
         string caminho = Application.persistentDataPath;//AppData/LocalLow/SeuNome
 
-        FileStream arquivo = File.Create(caminho + "/PlayerSave.save");
+        FileStream arquivo = File.Create(caminho + "/PersonagemSalvo.save");
 
         bF.Serialize(arquivo, _newSave);
 
         arquivo.Close();
 
-        Debug.Log("Jogo Salvo!");
+        Debug.Log("Personagem Escolhido Salvo!");
     }
 
+    public void SalvaOponenteBinario(SalvaOponente _newSave)
+    {
+        BinaryFormatter bF = new BinaryFormatter();
+
+        string caminho = Application.persistentDataPath;//AppData/LocalLow/SeuNome
+
+        FileStream arquivo = File.Create(caminho + "/OponenteSalvo.save");
+
+        bF.Serialize(arquivo, _newSave);
+
+        arquivo.Close();
+
+        Debug.Log("Oponente Salvo!");
+    }
+    
     public SalvaEscolhaPersonagem PersonagemSalvo()
     {
         BinaryFormatter bF = new BinaryFormatter();
@@ -69,19 +104,45 @@ public class SalvaJogoPC : MonoBehaviour
 
         FileStream arquivo;
 
-        if (File.Exists(caminho + "/PlayerSave.save"))
+        if (File.Exists(caminho + "/PersonagemSalvo.save"))
         {
-            arquivo = File.Open(caminho + "/PlayerSave.save", FileMode.Open);
+            arquivo = File.Open(caminho + "/PersonagemSalvo.save", FileMode.Open);
 
             SalvaEscolhaPersonagem personagemEscolhido = (SalvaEscolhaPersonagem)bF.Deserialize(arquivo);
 
             arquivo.Close();
 
-            Debug.Log("Jogo Carregado");
+            Debug.Log("Personagem Escolhido Carregado");
 
             return personagemEscolhido;
         }
 
         return null;
     }
+
+    public SalvaOponente OponenteSalvo()
+    {
+        BinaryFormatter bF = new BinaryFormatter();
+
+        string caminho = Application.persistentDataPath;
+
+        FileStream arquivo;
+
+        if (File.Exists(caminho + "/OponenteSalvo.save"))
+        {
+            arquivo = File.Open(caminho + "/OponenteSalvo.save", FileMode.Open);
+
+            SalvaOponente oponenteEscolhido = (SalvaOponente)bF.Deserialize(arquivo);
+
+            arquivo.Close();
+
+            Debug.Log("Oponente Carregado");
+
+            return oponenteEscolhido;
+        }
+
+        return null;
+    }
+   
 }
+

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fc7407bc1a054d46b6b1bcb4ec2a0b1, type: 3}
+  m_Name: Profeta
+  m_EditorClassIdentifier: Assembly-CSharp::CartaOriginal
+  ID: 11
+  funcao: 
+  especie: 0
+  especieDominante: 0
+  especieRecessiva: 0
+  nome: Profeta
+  vida: 80
+  vidaMaxima: 80
+  ataque: 40
+  couraca: 30
+  couracaMaxima: 30
+  reacao: 20
+  lucidez: 50

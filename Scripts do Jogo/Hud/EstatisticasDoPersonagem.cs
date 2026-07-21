@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 using TMPro;
 using UnityEngine;
 
 public class EstatisticasDoPersonagem : MonoBehaviour
 {
+    public CriaPersonagens criaPersonagens;
+    public TelaPersonagem telaPersonagem;
     public BancoCards bancoCards;
     public MostraCarta mostraCarta;
 
@@ -11,6 +14,8 @@ public class EstatisticasDoPersonagem : MonoBehaviour
     public TextMeshProUGUI textoEstatisticasDefensivas;
 
     public TextMeshProUGUI textoBotaoEspecie;
+
+    string guardaEspecieDominante;
 
     float resultadoDadoOfensivo;
     float resultadoDadoDefensivo;
@@ -22,9 +27,10 @@ public class EstatisticasDoPersonagem : MonoBehaviour
 
     public void Start()
     {
+        telaPersonagem = GetComponent<TelaPersonagem>();
         mostraCarta = GetComponent<MostraCarta>();
     }
-    public void resetaCalculo()
+    public void botaoResetaCalculo()
     {
         resultadoDadoOfensivo = 0;
         resultadoDadoDefensivo = 0;
@@ -40,14 +46,16 @@ public class EstatisticasDoPersonagem : MonoBehaviour
                 carta.cartaBase.especieDominante = true;
                 mostraCarta.LeitorDeCartasDoVisor(carta);
 
-                resultadoDadoOfensivo += carta.cartaBase.ataque / 3;
-                resultadoDadoDefensivo += carta.cartaBase.vidaMaxima / 3;
+                resultadoDadoOfensivo += carta.cartaBase.ataque + carta.cartaBase.reacao / 3;
+                resultadoDadoDefensivo += carta.cartaBase.vidaMaxima + carta.cartaBase.couraca / 3;
             }
             else
             {
                 mostraCarta.LimpaCartasDominantes(carta);
             }
         }
+
+        guardaEspecieDominante = "Espacial";
 
         textoEstatisticasOfensivas.text = "Pontos Ofensivos em Média: " + (resultadoDadoSecundarioOfensivo + resultadoDadoOfensivo).ToString();
         textoEstatisticasDefensivas.text = "Pontos Defensivos em Média: " + (resultadoDadoSecundarioDefensivo + resultadoDadoDefensivo).ToString();
@@ -58,19 +66,23 @@ public class EstatisticasDoPersonagem : MonoBehaviour
 
         foreach (CartaDaCena carta in bancoCards.geralCartaCenaLista)
         {
-            if(carta.cartaBase.especie == CartaOriginal.Especies.Extinto)
+            if (carta.cartaBase.especie == CartaOriginal.Especies.Extinto)
             {
                 carta.cartaBase.especieDominante = true;
                 mostraCarta.LeitorDeCartasDoVisor(carta);
 
-                resultadoDadoOfensivo += carta.cartaBase.ataque / 3;
-                resultadoDadoDefensivo += carta.cartaBase.vidaMaxima / 3;
+                resultadoDadoOfensivo += carta.cartaBase.ataque + carta.cartaBase.reacao / 3;
+                resultadoDadoDefensivo += carta.cartaBase.vidaMaxima + carta.cartaBase.couraca / 3;
             }
             else
             {
                 mostraCarta.LimpaCartasDominantes(carta);
             }
+
+
         }
+
+        guardaEspecieDominante = "Extinto";
 
         textoEstatisticasOfensivas.text = "Pontos Ofensivos em Média: " + (resultadoDadoSecundarioOfensivo + resultadoDadoOfensivo).ToString();
         textoEstatisticasDefensivas.text = "Pontos Defensivos em Média: " + (resultadoDadoSecundarioDefensivo + resultadoDadoDefensivo).ToString();
@@ -87,14 +99,16 @@ public class EstatisticasDoPersonagem : MonoBehaviour
                 carta.cartaBase.especieDominante = true;
                 mostraCarta.LeitorDeCartasDoVisor(carta);
 
-                resultadoDadoOfensivo += carta.cartaBase.ataque / 3;
-                resultadoDadoDefensivo += carta.cartaBase.vidaMaxima / 3;
+                resultadoDadoOfensivo += carta.cartaBase.ataque + carta.cartaBase.reacao / 3;
+                resultadoDadoDefensivo += carta.cartaBase.vidaMaxima + carta.cartaBase.couraca / 3;
             }
             else
             {
                 mostraCarta.LimpaCartasDominantes(carta);
             }
         }
+
+        guardaEspecieDominante = "Tenebroso";
 
         textoEstatisticasOfensivas.text = "Pontos Ofensivos em Média: " + (resultadoDadoSecundarioOfensivo + resultadoDadoOfensivo).ToString();
         textoEstatisticasDefensivas.text = "Pontos Defensivos em Média: " + (resultadoDadoSecundarioDefensivo + resultadoDadoDefensivo).ToString();
@@ -110,14 +124,15 @@ public class EstatisticasDoPersonagem : MonoBehaviour
                 carta.cartaBase.especieDominante = true;
                 mostraCarta.LeitorDeCartasDoVisor(carta);
 
-                resultadoDadoOfensivo += carta.cartaBase.ataque / 3;
-                resultadoDadoDefensivo += carta.cartaBase.vidaMaxima / 3;
+                resultadoDadoOfensivo += carta.cartaBase.ataque + carta.cartaBase.reacao / 3;
+                resultadoDadoDefensivo += carta.cartaBase.vidaMaxima + carta.cartaBase.couraca / 3;
             }
             else
             {
                 mostraCarta.LimpaCartasDominantes(carta);
             }
         }
+        guardaEspecieDominante = "Celestial";
 
         textoEstatisticasOfensivas.text = "Pontos Ofensivos em Média: " + (resultadoDadoSecundarioOfensivo + resultadoDadoOfensivo).ToString();
         textoEstatisticasDefensivas.text = "Pontos Defensivos em Média: " + (resultadoDadoSecundarioDefensivo + resultadoDadoDefensivo).ToString();
@@ -141,8 +156,8 @@ public class EstatisticasDoPersonagem : MonoBehaviour
                         carta.cartaBase.especieRecessiva = true;
                         mostraCarta.LeitorDeCartasDoVisor(carta);
 
-                        resultadoDadoSecundarioOfensivo += carta.cartaBase.ataque / 3;
-                        resultadoDadoSecundarioDefensivo += carta.cartaBase.vidaMaxima / 3;
+                        resultadoDadoSecundarioOfensivo += carta.cartaBase.ataque + carta.cartaBase.reacao / 3;
+                        resultadoDadoSecundarioDefensivo += carta.cartaBase.vidaMaxima + carta.cartaBase.couraca / 3;
                     }
                     else
                     {
@@ -150,6 +165,18 @@ public class EstatisticasDoPersonagem : MonoBehaviour
                     }
                 }
 
+                foreach (Personagem personagem in criaPersonagens.personagemList)
+                {
+                    if (telaPersonagem.GetPersonagemSelecionado() == personagem.id)
+                    {
+                        personagem.elencoDominante = guardaEspecieDominante;
+                        personagem.elencoRecessivo = "Espacial";
+
+                        telaPersonagem.EspeciesSelecionadas(personagem);
+
+                        break;
+                    }
+                }
 
                 textoBotaoEspecie.text = "Espacial";
 
@@ -164,12 +191,25 @@ public class EstatisticasDoPersonagem : MonoBehaviour
                         carta.cartaBase.especieRecessiva = true;
                         mostraCarta.LeitorDeCartasDoVisor(carta);
 
-                        resultadoDadoSecundarioOfensivo += carta.cartaBase.ataque / 3;
-                        resultadoDadoSecundarioDefensivo += carta.cartaBase.vidaMaxima / 3;
+                        resultadoDadoSecundarioOfensivo += carta.cartaBase.ataque + carta.cartaBase.reacao / 3;
+                        resultadoDadoSecundarioDefensivo += carta.cartaBase.vidaMaxima + carta.cartaBase.couraca / 3;
                     }
                     else
                     {
                         mostraCarta.LimpaCartasRecessoras(carta);
+                    }
+                }
+
+                foreach (Personagem personagem in criaPersonagens.personagemList)
+                {
+                    if (telaPersonagem.GetPersonagemSelecionado() == personagem.id)
+                    {
+                        personagem.elencoDominante = guardaEspecieDominante;
+                        personagem.elencoRecessivo = "Extinto";
+
+                        telaPersonagem.EspeciesSelecionadas(personagem);
+
+                        break;
                     }
                 }
 
@@ -186,12 +226,25 @@ public class EstatisticasDoPersonagem : MonoBehaviour
                         carta.cartaBase.especieRecessiva = true;
                         mostraCarta.LeitorDeCartasDoVisor(carta);
 
-                        resultadoDadoSecundarioOfensivo += carta.cartaBase.ataque / 3;
-                        resultadoDadoSecundarioDefensivo += carta.cartaBase.vidaMaxima / 3;
+                        resultadoDadoSecundarioOfensivo += carta.cartaBase.ataque + carta.cartaBase.reacao / 3;
+                        resultadoDadoSecundarioDefensivo += carta.cartaBase.vidaMaxima + carta.cartaBase.couraca / 3;
                     }
                     else
                     {
                         mostraCarta.LimpaCartasRecessoras(carta);
+                    }
+                }
+
+                foreach (Personagem personagem in criaPersonagens.personagemList)
+                {
+                    if (telaPersonagem.GetPersonagemSelecionado() == personagem.id)
+                    {
+                        personagem.elencoDominante = guardaEspecieDominante;
+                        personagem.elencoRecessivo = "Tenebroso";
+
+                        telaPersonagem.EspeciesSelecionadas(personagem);
+
+                        break;
                     }
                 }
 
@@ -208,12 +261,25 @@ public class EstatisticasDoPersonagem : MonoBehaviour
                         carta.cartaBase.especieRecessiva = true;
                         mostraCarta.LeitorDeCartasDoVisor(carta);
 
-                        resultadoDadoSecundarioOfensivo += carta.cartaBase.ataque / 3;
-                        resultadoDadoSecundarioDefensivo += carta.cartaBase.vidaMaxima / 3;
+                        resultadoDadoSecundarioOfensivo += carta.cartaBase.ataque + carta.cartaBase.reacao / 3;
+                        resultadoDadoSecundarioDefensivo += carta.cartaBase.vidaMaxima + carta.cartaBase.couraca / 3;
                     }
                     else
                     {
                         mostraCarta.LimpaCartasRecessoras(carta);
+                    }
+                }
+
+                foreach (Personagem personagem in criaPersonagens.personagemList)
+                {
+                    if (telaPersonagem.GetPersonagemSelecionado() == personagem.id)
+                    {
+                        personagem.elencoDominante = guardaEspecieDominante;
+                        personagem.elencoRecessivo = "Celestial";
+
+                        telaPersonagem.EspeciesSelecionadas(personagem);
+
+                        break;
                     }
                 }
 
@@ -225,9 +291,9 @@ public class EstatisticasDoPersonagem : MonoBehaviour
         textoEstatisticasOfensivas.text = "Pontos Ofensivos em Média: " + (resultadoDadoSecundarioOfensivo + resultadoDadoOfensivo).ToString();
         textoEstatisticasDefensivas.text = "Pontos Defensivos em Média: " + (resultadoDadoSecundarioDefensivo + resultadoDadoDefensivo).ToString();
 
-        if(contaClique > 2)
+        if (contaClique > 2)
         {
             contaClique = -1;
         }
-}
+    }
 }

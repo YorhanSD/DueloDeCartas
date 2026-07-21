@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f02fb33842650843ae334c7349856d5, type: 3}
+  m_Name: Charlotte
+  m_EditorClassIdentifier: Assembly-CSharp::Personagem
+  id: 4
+  fotoPersonagem: {fileID: 0}
+  nome: Charlotte
+  sobrinome: Gears
+  idade: 18
+  profissao: "Mec\xE2nica"
+  pais: Inglaterra
+  lore: "Charlotte, tem um p\xE9ssimo temperamento e isso se deve \xE0 sua rela\xE7\xE3o
+    com seu pai, Phillip Gears .Ele a treinou desde muito pequena para que ela se
+    tornasse a melhor, como um dia ele j\xE1 havia sido. Com um r\xEDgido treinamento
+    e privada de qualquer divers\xE3o, ela desenvolveu incriveis habilidades e bastante
+    raiva de seu pai. J\xE1 mais velha, Charlotte abandonou o treinamento e seguiu
+    seu pr\xF3prio caminho, escondendo seu parentesco de todos."
+  elencoDominante: 0
+  elencoRecessivo: 0

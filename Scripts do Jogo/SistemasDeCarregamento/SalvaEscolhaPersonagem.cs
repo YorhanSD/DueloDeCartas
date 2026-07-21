@@ -9,8 +9,25 @@ public class SalvaEscolhaPersonagem
     private int idPersonagem;
     private string nomePersonagem;
     private string pais;
-    private string campanha;
+    private string especieRecessiva;
+    private string especieDominante;
 
+    public void SetEspecieDominente(string _especieDominante)
+    {
+        especieDominante = _especieDominante;
+    }
+    public string GetEspecieDominante()
+    {
+        return especieDominante;
+    }
+    public void SetEspecieRecessiva(string _especieRecessiva)
+    {
+        especieRecessiva = _especieRecessiva;
+    }
+    public string GetEspecieRecessiva()
+    {
+        return especieRecessiva;
+    }
     public void SetNomePersonagemEscolhido(string _nomePersonagem)
     {
         nomePersonagem = _nomePersonagem;
@@ -26,14 +43,6 @@ public class SalvaEscolhaPersonagem
     public int GetPersonagemEscolhido() 
     {  
         return idPersonagem; 
-    }
-    public string GetCampanhaPersonagem()
-    {
-        return campanha;
-    }
-    public void SetCampanhaPersonagem(string _campanha)
-    {
-        campanha = _campanha;
     }
     public string GetPais()
     {

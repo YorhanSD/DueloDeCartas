@@ -157,30 +157,30 @@ public class IA_Oponente : MonoBehaviour
         }
     }
 
-    public void Ataque()
+    public void Ataque(CartaDaCena _cartaAlvo, Case _casaAlvo)
     {
 
         CartaDaCena cartaOponente = baralhoOponente.deckOponente.Find(c => c.dados.ID == GetCartaIDComMaiorAtaque());
-        CartaDaCena cartaJogador = baralhoJogador.deckJogador.Find(c => c.dados.ID == GetCartaIDComMenorCouraca());
+        //CartaDaCena cartaJogador = baralhoJogador.deckJogador.Find(c => c.dados.ID == GetCartaIDComMenorCouraca());
 
         Case _casaOponente = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == GetCartaIDComMaiorAtaque());
-        Case _casaJogador = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == GetCartaIDComMenorCouraca());
+        //Case _casaJogador = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == _cartaAlvo.dados.ID);
 
-        if (_casaJogador != null && _casaOponente != null)
-        {
+        //if (_casaJogador != null && _casaOponente != null)
+        //{
             //REGRA DAS CASAS:
 
             //UMA CARTA EM UMA CASA PAR, SÓ SE MOVE PARA OUTRA CASA PAR.
             //UMA CARTA EM UMA CASA IMPAR, SÓ SE MOVE PARA OUTRA CASA IMPAR.
 
-            Debug.Log($"Número da casa do jogador {_casaJogador.GetPosicaoCasa()}");
+            Debug.Log($"Número da casa do jogador {_casaAlvo.GetPosicaoCasa()}");
             Debug.Log($"Número da casa do oponente {_casaOponente.GetPosicaoCasa()}");
 
-            if (_casaJogador.GetPosicaoCasa() % 2 == 0 && _casaOponente.GetPosicaoCasa() % 2 == 0 || _casaJogador.GetPosicaoCasa() % 2 != 0 && _casaOponente.GetPosicaoCasa() % 2 != 0)
-            {
-                MoveCardOponente(cartaOponente, cartaJogador, _casaJogador);
-            }
-        }
+            //if (_casaJogador.GetPosicaoCasa() % 2 == 0 && _casaOponente.GetPosicaoCasa() % 2 == 0 || _casaJogador.GetPosicaoCasa() % 2 != 0 && _casaOponente.GetPosicaoCasa() % 2 != 0)
+            //{
+                MoveCardOponente(cartaOponente, _cartaAlvo, _casaAlvo);
+            //}
+        //}
     }
 
     public void MoveCardOponente(CartaDaCena _cardOponenteComMaiorAtaque, CartaDaCena _cardPlayerComMenorAtaque, Case casa)

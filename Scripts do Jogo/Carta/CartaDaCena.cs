@@ -8,7 +8,6 @@ using UnityEngine.EventSystems;
 public class CartaDaCena : MonoBehaviour
 {
     public int printID;
-
     public string printEspecie;
     public string printNome;
     public int printVidaMaxima;
@@ -54,13 +53,6 @@ public class CartaDaCena : MonoBehaviour
     public void GravaUI(CartaRuntime _cartaRuntime)
     {
         uiCarta.AtualizarUI(_cartaRuntime);
-        //uiCarta.nomeTMPRO.text = _cartaRuntime.nome;
-        //uiCarta.vidaMaximaTMPRO.text = _cartaRuntime.vidaMaxima.ToString();
-        //uiCarta.vidaAtualTMPRO.text = _cartaRuntime.vidaAtual.ToString();
-        //uiCarta.ataqueTMPRO.text = $"AT {_cartaRuntime.ataqueAtual.ToString()}";
-        //uiCarta.couracaTMPRO.text = $"CO {_cartaRuntime.couraca.ToString()}";
-        //uiCarta.reacaoTMPRO.text = $"RE {_cartaRuntime.reacao.ToString()}";
-        //uiCarta.lucidezTMPRO.text = $"LU {_cartaRuntime.lucidez.ToString()}";
     }
     public void PrintaDados(CartaRuntime _cartaRuntime)
     {
@@ -74,14 +66,7 @@ public class CartaDaCena : MonoBehaviour
         printReacao = _cartaRuntime.reacao;
         printLucidez = _cartaRuntime.lucidez;
     }
-    public void GravaDados(CartaRuntime _cartaRuntime)
-    {
-        //dados.ID = _cartaRuntime.ID;
-        //dados.nome = _cartaRuntime.nome;
-        //dados.vidaMaxima = _cartaRuntime.vidaMaxima;
-        //dados.vidaAtual = _cartaRuntime.vidaAtual;
-        //dados.ataqueAtual = _cartaRuntime.ataqueAtual;
-    }
+    
     public void SetPodeAtacar(bool _atacou)
     {
         podeAtacar = _atacou;
@@ -105,14 +90,5 @@ public class CartaDaCena : MonoBehaviour
     public void SetMoveuSe(bool _moveuSe)
     {
         moveuSe = _moveuSe;
-    }
-
-    public void OnTriggerEnter2D(Collider2D _casa)
-    {        
-        if(_casa.gameObject.tag == "Slot Player" && this.gameObject.tag != "Card Oponente")
-        {
-            //SetMoveuSe(true);
-            //SetEstaAtivada(true);
-        }
     }
 }

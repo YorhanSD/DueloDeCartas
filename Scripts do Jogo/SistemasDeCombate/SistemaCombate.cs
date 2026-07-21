@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 
 public class SistemaCombate : MonoBehaviour
 {
+    Trava_Casas travaCasas;
     //MONOBEHAVIOUR NÃO PODE SER CRIADO COM NEW
     BancoCards bancoCartas;
 
@@ -24,6 +25,7 @@ public class SistemaCombate : MonoBehaviour
     [System.Obsolete]
     public void Start()
     {
+        travaCasas = GetComponent<Trava_Casas>();
 
         casa = FindObjectOfType<Case>();
 
@@ -45,19 +47,14 @@ public class SistemaCombate : MonoBehaviour
 
         if (ataca == null || defende == null) return;
 
-        if (controlaTurnos.turnoOponente == false && ataca.CompareTag("Card Player") && defende.CompareTag("Card Oponente"))
+        if (controlaTurnos.turnoOponente == false && ataca.CompareTag("Carta Jogador") && defende.CompareTag("Carta Oponente"))
         {
             GravaUltimoID(ataca);
 
             ataca.SetPodeAtacar(false);
             ataca.SetMoveuSe(true);
-
-            //ChecaEspecie(ataca, defende);
-            //defende.dados.vidaAtual -= ataca.dados.ataqueAtual;
-
             VerificaCouraca(ataca, defende);
             DanoPorReacao(ataca, defende);
-
             defende.PrintaDados(defende.dados);
 
             if (defende.uiCarta != null)
@@ -69,36 +66,18 @@ public class SistemaCombate : MonoBehaviour
                 Debug.LogError($"Carta {defende.printNome} está sem UI ligada!");
             }
 
-            bool morreu = defende.dados.vidaAtual <= 0;
-
-            //VerificaMorte(defende);
-
-            if (morreu)
-            {
-                MoveCartaParaACasaQueDestruiuOCard(ataca, defende);
-            }
-            else
-            {
-                Retorno(ataca, defende);
-            }
+            VerificaMorte(ataca, defende);
         }
-        else if (controlaTurnos.turnoOponente == true && ataca.CompareTag("Card Oponente") && defende.CompareTag("Card Player"))
+        else if (controlaTurnos.turnoOponente == true && ataca.CompareTag("Carta Oponente") && defende.CompareTag("Carta Jogador"))
         {
 
             GravaUltimoID(ataca);
 
             ataca.SetPodeAtacar(false);
             ataca.SetMoveuSe(true);
-
-            //ChecaEspecie(ataca, defende);
-            //defende.dados.vidaAtual -= ataca.dados.ataqueAtual;
-
             VerificaCouraca(ataca, defende);
             DanoPorReacao(ataca, defende);
-
             defende.PrintaDados(defende.dados);
-
-
 
             if (defende.uiCarta != null)
             {
@@ -109,18 +88,7 @@ public class SistemaCombate : MonoBehaviour
                 Debug.LogError($"Carta {defende.printNome} está sem UI ligada!");
             }
 
-            bool morreu = defende.dados.vidaAtual <= 0;
-
-            //VerificaMorte(defende);
-
-            if (morreu)
-            {
-                MoveCartaParaACasaQueDestruiuOCard(ataca, defende);
-            }
-            else
-            {
-                Retorno(ataca, defende);
-            }
+            VerificaMorte(ataca, defende);
         }
 
     }
@@ -149,30 +117,19 @@ public class SistemaCombate : MonoBehaviour
             {
                 casa.SetUltimoID(_ataca.dados.ID); //Grava o id da carta atacante na sua própria casa
             }
-
-            //if (casa.GetIDCartaOcupante() == _defende.dados.ID)
-            //{
-            //casa.SetUltimoID(_ataca.dados.ID); //Grava o id da carta atacante na casa em que ela invade
-            //}
         }
     }
-
-
-    void VerificaMorte(CartaDaCena carta)
+    void VerificaMorte(CartaDaCena _ataca, CartaDaCena _defende)
     {
-        if (carta.dados.vidaAtual <= 0)
+        if (_defende.dados.vidaAtual <= 0)
         {
-
-            // Remove runtime
-            bancoCartas.geralCartaRuntimeLista.Remove(carta.dados);
-
-            // Remove da cena
-            bancoCartas.geralCartaCenaLista.Remove(carta);
-
-            Destroy(carta.gameObject);
+          MoveCartaParaACasaQueDestruiuOCard(_ataca, _defende);
+        }
+        else
+        {
+          Retorno(_ataca, _defende);
         }
     }
-
     public void MoveCartaParaACasaQueDestruiuOCard(CartaDaCena ataca, CartaDaCena defende)
     {
         Case casaDefensor = null;
@@ -195,7 +152,7 @@ public class SistemaCombate : MonoBehaviour
         // ATUALIZA A CASA
         casaDefensor.SetIDCartaOcupante(ataca.dados.ID);
 
-        if (ataca.CompareTag("Card Player"))
+        if (ataca.CompareTag("Carta Jogador"))
         {
             casaDefensor.SetCaseOcupadoJogador(true);
             casaDefensor.SetCaseOcupadoOponente(false);
@@ -223,6 +180,7 @@ public class SistemaCombate : MonoBehaviour
         if (_defende.dados.couracaAtual <= 0)
         {
             ChecaEspecie(_ataca, _defende);
+            //VerificaMorte(_ataca,_defende);
         }
         else
         {
@@ -234,19 +192,13 @@ public class SistemaCombate : MonoBehaviour
     {
         if (_ataca.dados.couracaAtual > 0)
         {
-            _ataca.dados.couracaAtual -= _defende.dados.reacao;
-
+            _ataca.dados.couracaAtual -= 10;
         }
         else
         {
-            _ataca.dados.vidaAtual -= _defende.dados.reacao;
-        }
-
-        _ataca.uiCarta.AtualizarUI(_ataca.dados);
-
-        if (_ataca.dados.vidaAtual <= 0)
-        {
-            Destroy(_ataca.gameObject);
+            //_ataca.dados.vidaAtual -= _defende.dados.reacao;
+            _ataca.uiCarta.AtualizarUI(_ataca.dados);
+            //VerificaMorte(_defende, _ataca);
         }
 
         Debug.Log($"Atacante: {_ataca.dados.nome} sofre: {_defende.dados.reacao} de Dano de Reação da Carta: {_defende.dados.reacao}");
@@ -271,6 +223,64 @@ public class SistemaCombate : MonoBehaviour
             Debug.Log($"Defensor: {defende.dados.nome} tem a espécie: {defende.dados.especieSelecionada}");
 
             Debug.Log($"{ataca.dados.nome} com o ID: {ataca.dados.ID} aplica [{ataca.dados.ataqueAtual / 2}] de dano [Ineficaz] a {defende.dados.nome} com o ID: {defende.dados.ID}");
+        }
+        else if (ataca.dados.especieSelecionada == "Extinto" && defende.dados.especieSelecionada == "Celestial")
+        {
+            defende.dados.vidaAtual -= ataca.dados.ataqueAtual * 2; //Multiplica o Dano por 2
+
+            Debug.Log($"Atacante: {ataca.dados.nome} tem a espécie: {ataca.dados.especieSelecionada}");
+            Debug.Log($"Defensor: {defende.dados.nome} tem a espécie: {defende.dados.especieSelecionada}");
+
+            Debug.Log($"{ataca.dados.nome} com o ID: {ataca.dados.ID} aplica [{ataca.dados.ataqueAtual * 2}] de dano [Super Eficaz] a {defende.dados.nome} com o ID: {defende.dados.ID}");
+        }
+        else if (ataca.dados.especieSelecionada == "Celestial" && defende.dados.especieSelecionada == "Extinto")
+        {
+            defende.dados.vidaAtual -= ataca.dados.ataqueAtual / 2; //Divide o Dano por 2
+
+            Debug.Log($"Atacante: {ataca.dados.nome} tem a espécie: {ataca.dados.especieSelecionada}");
+            Debug.Log($"Defensor: {defende.dados.nome} tem a espécie: {defende.dados.especieSelecionada}");
+
+            Debug.Log($"{ataca.dados.nome} com o ID: {ataca.dados.ID} aplica [{ataca.dados.ataqueAtual / 2}] de dano [Ineficaz] a {defende.dados.nome} com o ID: {defende.dados.ID}");
+        }
+        else if (ataca.dados.especieSelecionada == "Espacial" && defende.dados.especieSelecionada == "Extinto")
+        {
+            defende.dados.vidaAtual -= ataca.dados.ataqueAtual * 2; //Multiplica o Dano por 2
+
+            Debug.Log($"Atacante: {ataca.dados.nome} tem a espécie: {ataca.dados.especieSelecionada}");
+            Debug.Log($"Defensor: {defende.dados.nome} tem a espécie: {defende.dados.especieSelecionada}");
+
+            Debug.Log($"{ataca.dados.nome} com o ID: {ataca.dados.ID} aplica [{ataca.dados.ataqueAtual * 2}] de dano [Super Eficaz] a {defende.dados.nome} com o ID: {defende.dados.ID}");
+        }
+        else if (ataca.dados.especieSelecionada == "Extinto" && defende.dados.especieSelecionada == "Celestial")
+        {
+            defende.dados.vidaAtual -= ataca.dados.ataqueAtual / 2; //Divide o Dano por 2
+
+            Debug.Log($"Atacante: {ataca.dados.nome} tem a espécie: {ataca.dados.especieSelecionada}");
+            Debug.Log($"Defensor: {defende.dados.nome} tem a espécie: {defende.dados.especieSelecionada}");
+
+            Debug.Log($"{ataca.dados.nome} com o ID: {ataca.dados.ID} aplica [{ataca.dados.ataqueAtual / 2}] de dano [Ineficaz] a {defende.dados.nome} com o ID: {defende.dados.ID}");
+        }
+        else if (ataca.dados.especieSelecionada == "Tenebroso" && defende.dados.especieSelecionada == "Espacial")
+        {
+            defende.dados.vidaAtual -= ataca.dados.ataqueAtual * 2; //Multiplica o Dano por 2
+
+            Debug.Log($"Atacante: {ataca.dados.nome} tem a espécie: {ataca.dados.especieSelecionada}");
+            Debug.Log($"Defensor: {defende.dados.nome} tem a espécie: {defende.dados.especieSelecionada}");
+
+            Debug.Log($"{ataca.dados.nome} com o ID: {ataca.dados.ID} aplica [{ataca.dados.ataqueAtual * 2}] de dano [Super Eficaz] a {defende.dados.nome} com o ID: {defende.dados.ID}");
+        }
+        else if (ataca.dados.especieSelecionada == "Espacial" && defende.dados.especieSelecionada == "Tenebroso")
+        {
+            defende.dados.vidaAtual -= ataca.dados.ataqueAtual / 2; //Divide o Dano por 2
+
+            Debug.Log($"Atacante: {ataca.dados.nome} tem a espécie: {ataca.dados.especieSelecionada}");
+            Debug.Log($"Defensor: {defende.dados.nome} tem a espécie: {defende.dados.especieSelecionada}");
+
+            Debug.Log($"{ataca.dados.nome} com o ID: {ataca.dados.ID} aplica [{ataca.dados.ataqueAtual / 2}] de dano [Ineficaz] a {defende.dados.nome} com o ID: {defende.dados.ID}");
+        }
+        else
+        {
+            defende.dados.vidaAtual -= ataca.dados.ataqueAtual;
         }
     }
 }
