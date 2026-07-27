@@ -7,196 +7,70 @@ using UnityEngine.UI;
 
 public class IA_Oponente : MonoBehaviour
 {
-    //BancoCards bancoCartas;
-
-    Baralho baralhoJogador;
-
     Baralho_Oponente baralhoOponente;
 
     IA_MapeamentoDeCases ia_MapeamentoDeCases;
 
     ControlaTurnos controlaTurnos;
 
-    [SerializeField] private int guardaIDCartaComMaiorAtaque;
-
-    [SerializeField] private int guardaIDCartaComMenorAtaque;
-
-    [SerializeField] private int guardaIDCartaComMenorCouraca;
-
-    [SerializeField] private int guardaIDCartaComMaiorCouraca;
-
     public bool iaPodeAtacar = false;
 
     [System.Obsolete]
     public void Start()
     {
-        //bancoCartas = GetComponent<BancoCards>();
         ia_MapeamentoDeCases = GetComponent<IA_MapeamentoDeCases>();
         controlaTurnos = GetComponent<ControlaTurnos>();
         baralhoOponente = GetComponent<Baralho_Oponente>();
-        baralhoJogador = GetComponent<Baralho>();
-    }
-    public void SetCartaIDComMenorCouraca(int _cartaID)
-    {
-        guardaIDCartaComMenorCouraca = _cartaID;
-    }
-    public void SetCartaIDComMaiorCouraca(int _cartaID)
-    {
-        guardaIDCartaComMaiorCouraca = _cartaID;
-    }
-    public int GetCartaIDComMaiorCouraca()
-    {
-        return guardaIDCartaComMaiorCouraca;
-    }
-    public int GetCartaIDComMenorCouraca()
-    {
-        return guardaIDCartaComMenorCouraca;
-    }
-    public void SetCartaIDComMenosAtaque(int _cartaID)
-    {
-        guardaIDCartaComMenorAtaque = _cartaID;
-    }
-    public void SetCartaIDComMaiorAtaque(int _cartaID)
-    {
-        guardaIDCartaComMaiorAtaque = _cartaID;
-    }
-    public int GetCartaIDComMenosAtaque()
-    {
-        return guardaIDCartaComMenorAtaque;
-    }
-    public int GetCartaIDComMaiorAtaque()
-    {
-        return guardaIDCartaComMaiorAtaque;
     }
 
     public void ControleDeAcoes()
     {
-        if (controlaTurnos == true)
-        {
-            //JOGO SÓ FUNCIONA SE AS CARTAS DO OPONENTE ESTIVEREM OCULTAS EM CENA
-            //CASO CONTRÁRIO, MUITOS BUGS SURGIRÃO!
-
-            StartCoroutine(EsperaAsCartasDoOponenteAparecerem());
-        }
-    }
-    public IEnumerator EsperaAsCartasDoOponenteAparecerem()
-    {
-        //Tempo mínimo de espera: 1.5 s.
-        yield return new WaitForSeconds(2f);
-
-        ChecaCardsAtivosDoPlayer();
+        ProcuraAlvo();
+        Movimento();
     }
 
     //CHECA TODAS AS CARTAS ATIVAS DO JOGADOR
-    public void ChecaCardsAtivosDoPlayer()
+    public void ProcuraAlvo()
     {
-        foreach (CartaDaCena cartaAtiva in baralhoJogador.deckJogador)
+        for (int i = 0; i < baralhoOponente.deckOponente.Count; i++) //PERCORRE TODO O BARALHO PROCURANDO CARTAS QUE PODEM ATACAR
         {
-            if (cartaAtiva.GetEstaAtivada() == true)
-            {
-                VerificaCartaDoJogador(cartaAtiva);
-            }
-            else
-            {
-                VerificaMovimento();
+            CartaDaCena carta = baralhoOponente.deckOponente[i];
 
-                Debug.Log("Jogador não possui cartas ativas");
-            }
+            if (carta == null)
+                continue;
+
+            if (carta.GetPodeAtacar() == false)
+                continue;
+
+            Casa casa = ia_MapeamentoDeCases.listaCase.Find( c => c.GetIDCartaOcupante() == carta.dados.ID);
+
+            if (casa == null)
+                continue;
+
+            ia_MapeamentoDeCases.AtaquesPossiveis( casa.GetPosicaoCasa(), carta);
         }
     }
-
-    public void VerificaCartaDoJogador(CartaDaCena _cartaAtiva)
+    public void Movimento()
     {
-        //SetCartaIDComMenosAtaque(_cartaAtiva.dados.ID);
-        SetCartaIDComMenorCouraca(_cartaAtiva.dados.ID);
-
-        VerificaAtaque(_cartaAtiva);
-
-        //Debug.Log("Card com menor ataque entre todas as cartas do jogador : " + _cartaAtiva.dados.nomeAtual);
-    }
-
-    public void VerificaAtaque(CartaDaCena _cartaJogador)
-    {
-        CartaDaCena cartaOponente = baralhoOponente.deckOponente.Find(c => c != null);
-
-        if (cartaOponente.dados.ataqueAtual > 0 && cartaOponente.GetPodeAtacar() == true) //Se o ataque não for 0, pode atacar
+        for (int i = 0; i < baralhoOponente.deckOponente.Count; i++) //PERCORRE TODO O BARALHO PROCURANDO CARTAS QUE PODEM MOVER-SE
         {
-            SetCartaIDComMaiorAtaque(cartaOponente.dados.ID);
+            CartaDaCena carta = baralhoOponente.deckOponente[i];
 
-            //Debug.Log($"Carta {cartaOponente} tem mais ataque que {_cartaJogador}");
-        }
-        else
-        {
-            SetCartaIDComMaiorAtaque(cartaOponente.dados.ID);
+            if (carta == null)
+                continue;
 
-            //Debug.Log($"{cartaOponente} não tem ataque maior que {_cartaJogador}");
-        }
+            if (carta.GetMoveuSe() == true)
+                continue;
 
+            Casa casa = ia_MapeamentoDeCases.listaCase.Find(
+                c => c.GetIDCartaOcupante() == carta.dados.ID);
 
-        ia_MapeamentoDeCases.VerificaPosicaoAtualDaCarta(GetCartaIDComMaiorAtaque());
+            if (casa == null)
+                continue;
 
-        StartCoroutine(VerificaMovimento());
-    }
-
-    public IEnumerator VerificaMovimento()
-    {
-        yield return new WaitForSeconds(0.5f);
-
-        foreach (CartaDaCena _cartaApta in baralhoOponente.deckOponente)
-        {
-            if (_cartaApta.GetMoveuSe() == false && _cartaApta.GetPodeAtacar() == true)
-            {
-                ia_MapeamentoDeCases.VerificaPosicaoAtualDaCarta(_cartaApta.dados.ID);
-            }
-            else
-            {
-                //Debug.Log(_cartaApta.dados.nomeAtual + " ja atacou");
-
-                break;
-            }
+            ia_MapeamentoDeCases.MovimentosPossiveis( casa.GetPosicaoCasa(), carta);
         }
     }
-
-    public void Ataque(CartaDaCena _cartaAlvo, Case _casaAlvo)
-    {
-
-        CartaDaCena cartaOponente = baralhoOponente.deckOponente.Find(c => c.dados.ID == GetCartaIDComMaiorAtaque());
-        //CartaDaCena cartaJogador = baralhoJogador.deckJogador.Find(c => c.dados.ID == GetCartaIDComMenorCouraca());
-
-        Case _casaOponente = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == GetCartaIDComMaiorAtaque());
-        //Case _casaJogador = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == _cartaAlvo.dados.ID);
-
-        //if (_casaJogador != null && _casaOponente != null)
-        //{
-            //REGRA DAS CASAS:
-
-            //UMA CARTA EM UMA CASA PAR, SÓ SE MOVE PARA OUTRA CASA PAR.
-            //UMA CARTA EM UMA CASA IMPAR, SÓ SE MOVE PARA OUTRA CASA IMPAR.
-
-            Debug.Log($"Número da casa do jogador {_casaAlvo.GetPosicaoCasa()}");
-            Debug.Log($"Número da casa do oponente {_casaOponente.GetPosicaoCasa()}");
-
-            //if (_casaJogador.GetPosicaoCasa() % 2 == 0 && _casaOponente.GetPosicaoCasa() % 2 == 0 || _casaJogador.GetPosicaoCasa() % 2 != 0 && _casaOponente.GetPosicaoCasa() % 2 != 0)
-            //{
-                MoveCardOponente(cartaOponente, _cartaAlvo, _casaAlvo);
-            //}
-        //}
-    }
-
-    public void MoveCardOponente(CartaDaCena _cardOponenteComMaiorAtaque, CartaDaCena _cardPlayerComMenorAtaque, Case casa)
-    {
-        _cardOponenteComMaiorAtaque.SetMoveuSe(true);
-        _cardOponenteComMaiorAtaque.SetPodeAtacar(false);
-
-        if (_cardOponenteComMaiorAtaque != null && _cardPlayerComMenorAtaque != null)
-        {
-            //Debug.Log($"Card do oponente com maior ataque: {_cardOponenteComMaiorAtaque.gameObject.name} Card do jogador com menor ataque: {_cardPlayerComMenorAtaque.dados.nomeAtual}");
-
-            _cardOponenteComMaiorAtaque.transform.SetParent(casa.gameObject.transform, false);
-            _cardOponenteComMaiorAtaque.transform.localPosition = Vector3.zero;
-
-            //casa.OcuparCasa(_cardOponenteComMaiorAtaque);
-        }
-    }
+    
 }
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Trava_Casas : MonoBehaviour
+public class LiberaCasas : MonoBehaviour
 {
     public List<Bloqueador> listaBloqueadores = new List<Bloqueador>();
     IA_MapeamentoDeCases ia_MapeamentoDeCases;
@@ -19,6 +19,7 @@ public class Trava_Casas : MonoBehaviour
 
     public void BloqueiaCasas(int posicaoCasa) 
     {
+        /*
         for (int i = 0; i < 16; i++)
         {
             if (bloqueadores[i] != bloqueadores[posicaoCasa] && listaBloqueadores[i].GetDesativaBloqueador() == false) // Ativa todos os bloqueadores que não estão na posição a cima
@@ -30,27 +31,17 @@ public class Trava_Casas : MonoBehaviour
         }
 
         StartCoroutine(LiberaCasas(posicaoCasa));
+        */
     }
-
-    public void DesbloqueiaCasa(int posicaoCasa)
+    public void Liberar(int posicaoCasa)
     {
-        bloqueadores[posicaoCasa].SetActive(false);
+        StartCoroutine(LiberaCasasBloqueadas(posicaoCasa));
     }
-
-    public void ResetaCasas()
+    public IEnumerator LiberaCasasBloqueadas(int posicaoCasa)
     {
-        for (int i = 0; i < 16; i++)
-        {
-
-        bloqueadores[i].SetActive(false);
-            
-        }
-    }
-
-    public IEnumerator LiberaCasas(int posicaoCasa)
-    {
-        Debug.Log($"Número da casa, onde você colocou o Card : {posicaoCasa}");
         yield return new WaitForSeconds(0.5f);
+
+        bloqueadores[posicaoCasa].SetActive(false);
 
         // Se a posição da casa for um número par então:
         // Exemplo 6
@@ -58,7 +49,6 @@ public class Trava_Casas : MonoBehaviour
 
         if (posicaoCasa % 2 == 0)
         {
-
             if (posicaoCasa != 14 && posicaoCasa != 15)
             {
                 posicaoCasa += 2; //CASA 8
@@ -66,7 +56,6 @@ public class Trava_Casas : MonoBehaviour
                 ia_MapeamentoDeCases.listaCase[posicaoCasa].SetEstaBloqueado(false);
                 //Debug.Log($"Número da casa da direita que deve ficar livre : {posicaoCasa}");
             }
-            
             if (posicaoCasa != 0 && posicaoCasa != 1)
             {
                 posicaoCasa -= 1; //CASA 7
@@ -74,7 +63,6 @@ public class Trava_Casas : MonoBehaviour
                 ia_MapeamentoDeCases.listaCase[posicaoCasa].SetEstaBloqueado(false);
                 //Debug.Log($"Número da casa de baixo que deve ficar livre : {posicaoCasa}");
             }
-
             if (posicaoCasa != 0 && posicaoCasa != 1)
             {
                 posicaoCasa -= 3; //CASA 4
@@ -89,7 +77,6 @@ public class Trava_Casas : MonoBehaviour
             // Exemplo 7
             // As casas liberadas são estas:
 
-
             if (posicaoCasa != 14 && posicaoCasa != 15)
             {
                 posicaoCasa += 2; //CASA 9
@@ -97,7 +84,6 @@ public class Trava_Casas : MonoBehaviour
                 ia_MapeamentoDeCases.listaCase[posicaoCasa].SetEstaBloqueado(false);
                 //Debug.Log($"Número da casa da direita que deve ficar livre : {posicaoCasa}");
             }
-            
             if (posicaoCasa != 0 && posicaoCasa != 1)
             {
                 posicaoCasa -= 3; //CASA 6

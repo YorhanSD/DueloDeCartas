@@ -9,7 +9,7 @@ public class Baralho_Oponente : MonoBehaviour
     [SerializeField] private List<CartaDaCena> bancoDeCartasSelecionadas = new List<CartaDaCena>();
     [SerializeField] private List<CartaOriginal> dadosTemp = new List<CartaOriginal>();
 
-    public List<Case> casesOponente = new List<Case>();
+    public List<Casa> casesOponente = new List<Casa>();
 
     [SerializeField] UICard uiPrefab;
     [SerializeField] Transform uiParent;
@@ -19,7 +19,7 @@ public class Baralho_Oponente : MonoBehaviour
 
     public Canvas canvas;
     public int numeroAleatorio;
-    public int casaReferenciaDeMenorPosicao = 12;
+    public int casaReferenciaDeMaiorPosicao = 15;
     public Transform casaTransform;
 
     bool naoHaCasasDisponiveis;
@@ -51,55 +51,64 @@ public class Baralho_Oponente : MonoBehaviour
     {
         numeroAleatorio = Random.Range(0, 6);
 
-        ChecaCasasVazias(numeroAleatorio);
+        DefinePosicaoDaCarta();
     }
-    public void ChecaCasasVazias(int _numeroAleatorio)
+    public void ChecaCasasVazias()
     {
-        foreach (Case _casa in casesOponente)
-        {
-            if (_casa.GetCaseOcupadoOponente() == true || _casa.GetCaseOcupadoJogador() == true)
-            {
-                //SEMPRE QUE HOUVER CASAS OCUPADAS, A POSIÇÃO DE REFERÊNCIA AUMENTA
+        //for(int i = 16; i > 11; i--)
+        //{
+            
+            Debug.Log("Casa que pode ser aclopada com carta do oponente " + casaReferenciaDeMaiorPosicao);
+           // DefinePosicaoDaCarta();
+        //}
+        //foreach (Casa _casa in casesOponente)
+        //{
+            //if (_casa.GetCaseOcupadoOponente() == true && _casa.GetCaseOcupadoJogador() == true)
+            //{
+                //SEMPRE QUE HOUVER CASAS OCUPADAS, A POSIÇÃO DE REFERÊNCIA DIMINUI
 
-                if (casaReferenciaDeMenorPosicao < 16)
-                {
-                    casaReferenciaDeMenorPosicao++;
+                //if (casaReferenciaDeMaiorPosicao > 11)
+                //{
+                    //casaReferenciaDeMaiorPosicao--;
 
-                    naoHaCasasDisponiveis = true;
-                }
-            }
-            else
-            {
-                Debug.Log("Há casas disponíveis");
+                    //Debug.Log("Casa que pode ser aclopada com carta do oponente " + casaReferenciaDeMaiorPosicao);
 
-                naoHaCasasDisponiveis = false;
+                    //naoHaCasasDisponiveis = true;
+                //}
+            //}
+            //else
+            //{
+                //Debug.Log("Há casas disponíveis");
 
-                Case _casaEscolhida = casesOponente.Find(c => c.GetPosicaoCasa() == casaReferenciaDeMenorPosicao);
+                //naoHaCasasDisponiveis = false;
 
-                DefinePosicaoDaCarta(_casaEscolhida.transform, _numeroAleatorio);
+                //Casa _casaEscolhida = casesOponente.Find(c => c.GetPosicaoCasa() == casaReferenciaDeMaiorPosicao);
 
-                break;
-            }
-        }
+                //DefinePosicaoDaCarta(_casaEscolhida.transform, _numeroAleatorio);
+
+                //break;
+            //}
+        //}
 
         
     }
-    public void DefinePosicaoDaCarta(Transform _posicaoCasa, int _numeroSortiado)
+    public void DefinePosicaoDaCarta()
     {
-        if (naoHaCasasDisponiveis == false)
-        {
-            CartaDaCena cartaClone = Instantiate(bancoDeCartasSelecionadas[_numeroSortiado], _posicaoCasa, false);
+        Casa _casaEscolhida = casesOponente.Find(c => c.GetPosicaoCasa() == casaReferenciaDeMaiorPosicao);
+        //if (naoHaCasasDisponiveis == false)
+        //{
+        CartaDaCena cartaClone = Instantiate(bancoDeCartasSelecionadas[numeroAleatorio], _casaEscolhida.transform, false);
 
             cartaClone.tag = "Carta Oponente";
             cartaClone.GetComponent<MoveCarta>().enabled = false;
 
-            CriaDuplicata(_numeroSortiado, cartaClone);
-        }
+            CriaDuplicata(cartaClone);
+        //}
     }
-    public void CriaDuplicata(int _numeroSortiado, CartaDaCena cartaClone)
+    public void CriaDuplicata(CartaDaCena cartaClone)
     {
         CartaRuntime cartaRuntime = new CartaRuntime();
-        cartaRuntime.cartaOriginal = bancoDeCartasSelecionadas[_numeroSortiado].cartaBase; ;
+        cartaRuntime.cartaOriginal = bancoDeCartasSelecionadas[numeroAleatorio].cartaBase; ;
         cartaRuntime.Inicializar(bancoCartas.contaID);
 
         cartaClone.dados = cartaRuntime;

@@ -38,6 +38,10 @@ public class CartaDaCena : MonoBehaviour
      
     [SerializeField] private bool moveuSe = false;
 
+    [SerializeField] private bool atacando = false;
+
+    [SerializeField] private bool morreu = false;
+
     [System.Obsolete]
     void Awake()
     {
@@ -50,6 +54,17 @@ public class CartaDaCena : MonoBehaviour
             Debug.LogError($"Canvas não encontrado para a carta {gameObject.name}");
         }
     }
+
+    public void SetCartaMorreu(bool _morreu)
+    {
+        morreu = _morreu;
+    }
+
+    public bool GetCartaMorte()
+    {
+        return morreu;
+    }
+
     public void GravaUI(CartaRuntime _cartaRuntime)
     {
         uiCarta.AtualizarUI(_cartaRuntime);
@@ -66,7 +81,14 @@ public class CartaDaCena : MonoBehaviour
         printReacao = _cartaRuntime.reacao;
         printLucidez = _cartaRuntime.lucidez;
     }
-    
+    public void SetCartaEstaAtacando(bool _atacando)
+    {
+        atacando = _atacando;
+    }
+    public bool GetCartaEstaAtacando()
+    {
+        return atacando;
+    }
     public void SetPodeAtacar(bool _atacou)
     {
         podeAtacar = _atacou;

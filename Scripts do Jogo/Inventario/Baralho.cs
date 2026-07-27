@@ -9,7 +9,7 @@ public class Baralho : MonoBehaviour
     //LISTAS EXCLUSIVAS PARA CARTAS CLONES
     public List<CartaDaCena> deckJogador = new List<CartaDaCena>();
     [SerializeField] private List<CartaDaCena> cenaTemp = new List<CartaDaCena>();
-    public List<CartaDaCena> bancoDeCartasSelecionadas = new List<CartaDaCena>();
+    [SerializeField] private List<CartaDaCena> bancoDeCartasSelecionadas = new List<CartaDaCena>();
     [SerializeField] private List<CartaOriginal> dadosTemp = new List<CartaOriginal>();
 
 

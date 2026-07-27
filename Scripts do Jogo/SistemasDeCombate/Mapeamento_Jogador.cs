@@ -4,12 +4,9 @@ using UnityEngine;
 
 public class Mapeamento_Jogador : MonoBehaviour
 {
-    public Trava_Casas travaCasas;
     public BancoCards bancoCartas;
     public SistemaCombate sistemaCombate;
     public IA_MapeamentoDeCases ia_MapeamentoDeCases;
-
-   
 
     private void Start()
     {
@@ -19,12 +16,11 @@ public class Mapeamento_Jogador : MonoBehaviour
 
         ia_MapeamentoDeCases = GetComponent<IA_MapeamentoDeCases>();
 
-        travaCasas = GetComponent<Trava_Casas>();
     }
     public void VerificaPossicaoAtualDaCartaDoJogador(int _ID)
     {
         CartaDaCena _cartaCena = bancoCartas.geralCartaCenaLista.Find(c => c.dados.ID == _ID); //USAR DADOS, EM VEZ DE: CARTABASE
-        Case _casa = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == _ID);
+        Casa _casa = ia_MapeamentoDeCases.listaCase.Find(c => c.GetIDCartaOcupante() == _ID);
 
         if (_cartaCena == null)
         {
@@ -59,7 +55,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[7].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[9].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[7].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[7].GetPosicaoCasa());
                 }
                 else
                 {
@@ -72,7 +68,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[6].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[8].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[6].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[6].GetPosicaoCasa());
                 }
                 else
                 {
@@ -88,7 +84,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[5].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[7].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[5].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[5].GetPosicaoCasa());
                 }
                 else
                 {
@@ -103,7 +99,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[4].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[6].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[4].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[4].GetPosicaoCasa());
                 }
                 else
                 {
@@ -119,7 +115,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[3].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[5].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[3].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[3].GetPosicaoCasa());
                 }
                 else
                 {
@@ -135,7 +131,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[2].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[4].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[2].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[2].GetPosicaoCasa());
                 }
                 else
                 {
@@ -152,7 +148,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[1].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[3].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[1].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[1].GetPosicaoCasa());
                     
                 }
                 else
@@ -169,7 +165,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[0].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[2].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[0].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[0].GetPosicaoCasa());
                     
                 }
                 else
@@ -186,7 +182,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[8].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[10].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[8].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[8].GetPosicaoCasa());
                 }
                 else
                 {
@@ -201,7 +197,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[9].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[11].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[9].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[9].GetPosicaoCasa());
                 }
                 else
                 {
@@ -216,7 +212,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[11].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[13].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[11].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[11].GetPosicaoCasa());
                 }
                 else
                 {
@@ -231,7 +227,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[12].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[14].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[12].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[12].GetPosicaoCasa());
                 }
                 else
                 {
@@ -247,7 +243,7 @@ public class Mapeamento_Jogador : MonoBehaviour
 
                 if (_carta.dados.ID == ia_MapeamentoDeCases.listaCase[13].GetIDCartaOcupante() && ia_MapeamentoDeCases.listaCase[15].GetCaseOcupadoOponente() == false)
                 {
-                    travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[13].GetPosicaoCasa());
+                    //travaCasas.BloqueiaCasas(ia_MapeamentoDeCases.listaCase[13].GetPosicaoCasa());
                 }
                 else
                 {

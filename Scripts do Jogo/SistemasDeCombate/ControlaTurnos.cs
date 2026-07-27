@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class ControlaTurnos : MonoBehaviour
 {
+    public bool turnoOponente;
+
     IA_Oponente iaOponente;
     SistemaCombate sistemaDeCombate;
     Cronometro cronometro;
@@ -13,13 +15,7 @@ public class ControlaTurnos : MonoBehaviour
     Baralho baralhoJogador;
     Baralho_Oponente baralhoOponente;
 
-    //BancoCards bancoCartas;
-
-    public bool turnoOponente;
-    Trava_Casas travaCasas;
     IA_MapeamentoDeCases ia_MapeamentoDeCases;
-
-    Mapeamento_Jogador mapeamentoJogador;
 
     public GameObject telaTurnoPlayer;
     public GameObject telaturnoOponente;
@@ -28,26 +24,20 @@ public class ControlaTurnos : MonoBehaviour
     public int numeroTurno;
     public TextMeshProUGUI textoTurno;
 
-    [System.Obsolete]
     public void Start()
     {
         numeroTurno = 1;
 
         //Para usar o GetComponent o Script deve estar no mesmo Objeto
 
-        //bancoCartas = GetComponent<BancoCards>();
-
         sistemaDeCombate = GetComponent<SistemaCombate>();
-        travaCasas = GetComponent<Trava_Casas>();
         iaOponente = GetComponent<IA_Oponente>();
         cronometro = GetComponent<Cronometro>();
-        mapeamentoJogador = GetComponent<Mapeamento_Jogador>();
         baralhoJogador = GetComponent<Baralho>();
         baralhoOponente = GetComponent<Baralho_Oponente>();
         ia_MapeamentoDeCases = GetComponent<IA_MapeamentoDeCases>();
 
         StartCoroutine(GeraCartasDoJogador());
-
     }
 
     public void Update()
@@ -60,47 +50,32 @@ public class ControlaTurnos : MonoBehaviour
 
         botaoPassaTurno.SetActive(false);
 
-        StartCoroutine(TurnoOponente());
+        StartCoroutine(Esperas());
 
         sistemaDeCombate.travarJogador = true;
     }
 
-    public IEnumerator TurnoOponente()
+    public IEnumerator Esperas()
     {
-        turnoOponente = true;
-
-        ResetaMovimentoDasCartas();
-
-        ResetaUltimoIDCasas();
-
-        //travaCasas.ResetaCasas();
-
-        baralhoOponente.casaReferenciaDeMenorPosicao = 12;
+        TurnoOponente();
 
         yield return new WaitForSeconds(1f);
 
-        cronometro.tempoOponente = 120;
-
-        cronometro.ParaCronometro_Jogador();
-        cronometro.IniciaCronometro_Oponente();
+        ResetaCronometroOponente();
 
         telaturnoOponente.SetActive(false);
-
-        numeroTurno ++;
 
         if(numeroTurno == 2)
         {
             StartCoroutine(GeraCartasDoOponente());
         }
 
-        if (numeroTurno > 3)
+        if (numeroTurno >= 3)
         {
             //ProximaCartaOponente();
         }
 
-        Cursor.visible = false;
-
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
 
         iaOponente.ControleDeAcoes();
 
@@ -110,34 +85,62 @@ public class ControlaTurnos : MonoBehaviour
 
         //==========TURNO JOGADOR==========//
 
+        TurnoJogador();
+
         TelaTurnoJogador(true);
-
-        sistemaDeCombate.travarJogador = false;
-
-        botaoPassaTurno.SetActive(true);
 
         yield return new WaitForSeconds(1f);
 
         TelaTurnoJogador(false);
 
-        Cursor.visible = true;
-
-        cronometro.tempoJogador = 120;
-
-        cronometro.ParaCronometro_Oponente();
-        cronometro.IniciaCronometro_Jogador();
+        ResetaCronometroJogador();
 
         //ProximaCartaJogador();
+    }
 
+    public void TurnoOponente() 
+    {
         numeroTurno++;
+
+        turnoOponente = true;
+
+        ResetaMovimentoDasCartas();
+
+        ResetaUltimoIDCasas();
+
+        baralhoOponente.casaReferenciaDeMaiorPosicao = 15;
+
+        Cursor.visible = false;
     }
-    public void ProximaCartaJogador()
+    
+    public void TurnoJogador()
     {
-        //baralhoJogador.NumeroAleatorio();
+        numeroTurno++;
+
+        sistemaDeCombate.travarJogador = false;
+
+        botaoPassaTurno.SetActive(true);
+
+        Cursor.visible = true;
     }
-    public void ProximaCartaOponente()
+
+    public void ResetaCronometroJogador()
     {
-        //baralhoOponente.ProximaCartaAleatoriaOponente();
+        cronometro.tempoJogador = 120;
+        cronometro.ParaCronometro_Oponente();
+        cronometro.IniciaCronometro_Jogador();
+    }
+
+    public void ResetaCronometroOponente()
+    {
+        cronometro.tempoOponente = 120;
+        cronometro.ParaCronometro_Jogador();
+        cronometro.IniciaCronometro_Oponente();
+    }
+
+    public void TelaTurnoJogador(bool _comando)
+    {
+        telaTurnoPlayer.SetActive(_comando);
     }
     public IEnumerator GeraCartasDoJogador()
     {
@@ -148,15 +151,21 @@ public class ControlaTurnos : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
     }
+
     public IEnumerator GeraCartasDoOponente()
     {
         for (int i = 0; i < 3; i++)
         {
             yield return new WaitForSeconds(0.5f);
+
             baralhoOponente.ProximaCartaAleatoriaOponente();
+
             yield return new WaitForSeconds(0.5f);
+
+            baralhoOponente.casaReferenciaDeMaiorPosicao--;
         }
     }
+
     public void ResetaMovimentoDasCartas()
     {
         foreach(CartaDaCena cartaCena in baralhoOponente.deckOponente)
@@ -177,10 +186,9 @@ public class ControlaTurnos : MonoBehaviour
             }
         }
     }
-
     public void ResetaUltimoIDCasas()
     {
-        foreach (Case casaB in ia_MapeamentoDeCases.listaCase)
+        foreach (Casa casaB in ia_MapeamentoDeCases.listaCase)
         {
             if (casaB.GetUltimoID() != -1)
             {
@@ -188,9 +196,4 @@ public class ControlaTurnos : MonoBehaviour
             }
         }
     }
-    public void TelaTurnoJogador(bool _comando)
-    {
-        telaTurnoPlayer.SetActive(_comando);
-    }
-   
 }

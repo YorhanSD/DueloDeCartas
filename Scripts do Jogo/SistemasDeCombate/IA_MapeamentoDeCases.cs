@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Analytics.IAnalytic;
 using static UnityEngine.EventSystems.EventTrigger;
 
 public class IA_MapeamentoDeCases : MonoBehaviour
 {
-    public List<Case> listaCase = new List<Case>();
+    public List<Casa> listaCase = new List<Casa>();
 
     BancoCards bancoCartas;
 
@@ -13,24 +14,20 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
     public SistemaCombate sistemaCombate;
 
-    public Trava_Casas travaCasas;
-
     int numeroDeCasas = 16;
 
     IA_Oponente ai_Oponente;
 
-    public bool atacou = false; 
+    public bool atacou = false;
 
     [System.Obsolete]
     private void Start()
     {
-        travaCasas = GetComponent<Trava_Casas>();
-
         baralhoOponente = GetComponent<Baralho_Oponente>();
 
         bancoCartas = GetComponent<BancoCards>();
 
-        sistemaCombate = FindObjectOfType<SistemaCombate>();
+        sistemaCombate = GetComponent<SistemaCombate>();
 
         ai_Oponente = GetComponent<IA_Oponente>();
 
@@ -43,54 +40,50 @@ public class IA_MapeamentoDeCases : MonoBehaviour
             listaCase[i].SetCasaPosicao(i);
         }
     }
-    public void VerificaPosicaoAtualDaCarta(int _IDCartaOponente)
-    {
-        CartaDaCena _cartaOponente = baralhoOponente.deckOponente.Find(c => c.dados.ID == _IDCartaOponente);
-        Case _casa = listaCase.Find(c => c.GetIDCartaOcupante() == _IDCartaOponente);
-
-        if (_casa != null && _cartaOponente != null)
-        {
-            if (_casa.GetIDCartaOcupante() == _IDCartaOponente)
-            {
-                Debug.Log($"A carta: {_cartaOponente.dados.nome} se encontra na casa {_casa.GetPosicaoCasa()}");
-
-                if (_cartaOponente.GetMoveuSe() == false)
-                {
-                    MovimentosPossiveis(_casa.GetPosicaoCasa(), _cartaOponente);
-                }
-
-                if (_cartaOponente.GetPodeAtacar() == true)
-                {
-                    AtaquesPossiveis(_casa.GetPosicaoCasa(), _cartaOponente);
-                }
-                
-            }
-            else
-            {
-                Debug.Log($"Não foram encontrados movimentos possíveis!");
-            }
-        }
-
-
-    }
 
     //VERIFICAR POSICAO DAS CASAS!
+
     public void MovimentosPossiveis(int _posicaoCasa, CartaDaCena _carta)
     {
         switch (_posicaoCasa)
         {
+            //SE ESTIVER NA CASA 15, A CARTA PODE SE MOVER ATÉ A CASA 13
+
+            case 15:
+
+                if (listaCase[13].GetCaseOcupadoJogador() == false && listaCase[13].GetCaseOcupadoOponente() == false && listaCase[13].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[15].GetIDCartaOcupante())
+                {
+                    MoverCarta(_carta, listaCase[13]);
+                }
+                else
+                {
+                    Debug.Log($"{_carta.gameObject} não pode se mover!");
+                }
+
+                break;
+
+            //SE ESTIVER NA CASA 14, A CARTA PODE SE MOVER ATÉ A CASA 12
+
+            case 14:
+
+                if (listaCase[12].GetCaseOcupadoJogador() == false && listaCase[12].GetCaseOcupadoOponente() == false && listaCase[12].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[14].GetIDCartaOcupante())
+                {
+                    MoverCarta(_carta, listaCase[12]);
+                }
+                else
+                {
+                    Debug.Log($"{_carta.gameObject} não pode se mover!");
+                }
+
+                break;
+
             //SE ESTIVER NA CASA 13, A CARTA PODE SE MOVER ATÉ A CASA 11
+
             case 13:
 
-                if (listaCase[11].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[13].GetIDCartaOcupante())
+                if (listaCase[11].GetCaseOcupadoJogador() == false && listaCase[11].GetCaseOcupadoOponente() == false && listaCase[11].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[13].GetIDCartaOcupante())
                 {
-                    _carta.transform.SetParent(listaCase[11].gameObject.transform, false);
-                    _carta.transform.localPosition = Vector3.zero;
-                    
-
-                    _carta.SetMoveuSe(true);
-
-                    Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[11].GetPosicaoCasa()}");
+                    MoverCarta(_carta, listaCase[11]);
                 }
                 else
                 {
@@ -98,36 +91,14 @@ public class IA_MapeamentoDeCases : MonoBehaviour
                 }
 
                 break;
+
             //SE ESTIVER NA CASA 12, A CARTA PODE SE MOVER ATÉ A CASA 10
+
             case 12:
 
-                if (listaCase[10].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[12].GetIDCartaOcupante())
+                if (listaCase[10].GetCaseOcupadoJogador() == false && listaCase[10].GetCaseOcupadoOponente() == false && listaCase[10].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[12].GetIDCartaOcupante())
                 {
-                    _carta.transform.SetParent(listaCase[10].gameObject.transform, false);
-                    _carta.transform.localPosition = Vector3.zero;
-
-                    _carta.SetMoveuSe(true);
-
-                    Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[10].GetPosicaoCasa()}");
-                }
-                else
-                {
-                    Debug.Log($"{_carta.gameObject} não pode se mover!");
-                }
-
-                break;
-
-            //SE ESTIVER NA CASA 10, A CARTA PODE SE MOVER ATÉ A CASA 8
-            case 10:
-
-                if (listaCase[8].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[10].GetIDCartaOcupante())
-                {
-                    _carta.transform.SetParent(listaCase[8].gameObject.transform, false);
-                    _carta.transform.localPosition = Vector3.zero;
-
-                    _carta.SetMoveuSe(true);
-
-                    Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[8].GetPosicaoCasa()}");
+                    MoverCarta(_carta, listaCase[10]);
                 }
                 else
                 {
@@ -137,16 +108,12 @@ public class IA_MapeamentoDeCases : MonoBehaviour
                 break;
 
             //SE ESTIVER NA CASA 11, A CARTA PODE SE MOVER ATÉ A CASA 9
+
             case 11:
 
-                if (listaCase[9].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[11].GetIDCartaOcupante())
+                if (listaCase[9].GetCaseOcupadoJogador() == false && listaCase[9].GetCaseOcupadoOponente() == false && listaCase[9].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[11].GetIDCartaOcupante())
                 {
-                    _carta.transform.SetParent(listaCase[9].gameObject.transform, false);
-                    _carta.transform.localPosition = Vector3.zero;
-
-                    _carta.SetMoveuSe(true);
-
-                    Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[9].GetPosicaoCasa()}");
+                    MoverCarta(_carta, listaCase[9]);
                 }
                 else
                 {
@@ -155,17 +122,13 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 break;
 
-            //SE ESTIVER NA CASA 8, A CARTA PODE SE MOVER ATÉ A CASA 6
-            case 8:
+            //SE ESTIVER NA CASA 10, A CARTA PODE SE MOVER ATÉ A CASA 8
 
-                if (listaCase[6].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[8].GetIDCartaOcupante())
+            case 10:
+
+                if (listaCase[8].GetCaseOcupadoJogador() == false && listaCase[8].GetCaseOcupadoOponente() == false && listaCase[8].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[10].GetIDCartaOcupante())
                 {
-                    _carta.transform.SetParent(listaCase[6].gameObject.transform, false);
-                    _carta.transform.localPosition = Vector3.zero;
-
-                    _carta.SetMoveuSe(true);
-
-                    Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[6].GetPosicaoCasa()}");
+                    MoverCarta(_carta, listaCase[8]);
                 }
                 else
                 {
@@ -175,16 +138,12 @@ public class IA_MapeamentoDeCases : MonoBehaviour
                 break;
 
             //SE ESTIVER NA CASA 9, A CARTA PODE SE MOVER ATÉ A CASA 7
+
             case 9:
 
-                if (listaCase[7].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[9].GetIDCartaOcupante())
+                if (listaCase[7].GetCaseOcupadoJogador() == false && listaCase[7].GetCaseOcupadoOponente() == false && listaCase[7].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[9].GetIDCartaOcupante())
                 {
-                    _carta.transform.SetParent(listaCase[7].gameObject.transform, false);
-                    _carta.transform.localPosition = Vector3.zero;
-
-                    _carta.SetMoveuSe(true);
-
-                    Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[7].GetPosicaoCasa()}");
+                    MoverCarta(_carta, listaCase[7]);
                 }
                 else
                 {
@@ -193,60 +152,13 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 break;
 
-            //ULTIMA CASA
-            //SE ESTIVER NA CASA 0, NÃO PODE MAIS AVANÇAR
+            //SE ESTIVER NA CASA 8, A CARTA PODE SE MOVER ATÉ A CASA 6
 
-            //case 0:
+            case 8:
 
-                //if (listaCase[2].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[0].GetIDCartaOcupante())
-                //{
-                    //_carta.transform.SetParent(listaCase[2].gameObject.transform, false);
-                    //_carta.transform.localPosition = Vector3.zero;
-
-                    //_carta.SetMoveuSe(true);
-
-                    //Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[2].GetPosicaoCasa()}");
-                //}
-                //else
-                //{
-                    //Debug.Log($"{_carta.gameObject} não pode se mover!");
-                //}
-
-                //break;
-
-            //ULTIMA CASA
-            //SE ESTIVER NA CASA 1, NÃO PODE MAIS AVANÇAR
-
-            //case 1:
-
-                //if (listaCase[3].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[1].GetIDCartaOcupante())
-                //{
-                    //_carta.transform.SetParent(listaCase[3].gameObject.transform, false);
-                    //_carta.transform.localPosition = Vector3.zero;
-
-                    //_carta.SetMoveuSe(true);
-
-                    //Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[3].GetPosicaoCasa()}");
-                //}
-                //else
-                //{
-                    //Debug.Log($"{_carta.gameObject} não pode se mover!");
-                //}
-
-                //break;
-
-            //SE ESTIVER NA CASA 2, A CARTA PODE SE MOVER ATÉ A CASA 0
-
-            case 2:
-
-                if (listaCase[0].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[2].GetIDCartaOcupante())
+                if (listaCase[6].GetCaseOcupadoJogador() == false && listaCase[6].GetCaseOcupadoOponente() == false && listaCase[6].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[8].GetIDCartaOcupante())
                 {
-                    _carta.transform.SetParent(listaCase[0].gameObject.transform, false);
-                    _carta.transform.localPosition = Vector3.zero;
-
-                    _carta.SetMoveuSe(true);
-
-                    Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[0].GetPosicaoCasa()}");
+                    MoverCarta(_carta, listaCase[6]);
                 }
                 else
                 {
@@ -255,37 +167,28 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 break;
 
-            //SE ESTIVER NA CASA 3, A CARTA PODE SE MOVER ATÉ A CASA 1
+            //SE ESTIVER NA CASA 7, A CARTA PODE SE MOVER ATÉ A CASA 5
 
-            case 3:
+            case 7:
 
-                if (listaCase[1].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[3].GetIDCartaOcupante())
+                if (listaCase[5].GetCaseOcupadoJogador() == false && listaCase[5].GetCaseOcupadoOponente() == false && listaCase[5].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[7].GetIDCartaOcupante())
                 {
-                    _carta.transform.SetParent(listaCase[1].gameObject.transform, false);
-                    _carta.transform.localPosition = Vector3.zero;
-
-                    _carta.SetMoveuSe(true);
-
-                    Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[1].GetPosicaoCasa()}");
+                    MoverCarta(_carta, listaCase[5]);
                 }
                 else
                 {
                     Debug.Log($"{_carta.gameObject} não pode se mover!");
                 }
+
                 break;
 
-            //SE ESTIVER NA CASA 4, A CARTA PODE SE MOVER ATÉ A CASA 2
+            //SE ESTIVER NA CASA 6, A CARTA PODE SE MOVER ATÉ A CASA 4
 
-            case 4:
+            case 6:
 
-                if (listaCase[2].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[4].GetIDCartaOcupante())
+                if (listaCase[4].GetCaseOcupadoJogador() == false && listaCase[4].GetCaseOcupadoOponente() == false && listaCase[4].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[6].GetIDCartaOcupante())
                 {
-                    _carta.transform.SetParent(listaCase[2].gameObject.transform, false);
-                    _carta.transform.localPosition = Vector3.zero;
-
-                    _carta.SetMoveuSe(true);
-
-                    Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[2].GetPosicaoCasa()}");
+                    MoverCarta(_carta, listaCase[4]);
                 }
                 else
                 {
@@ -298,14 +201,53 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
             case 5:
 
-                if (listaCase[3].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[5].GetIDCartaOcupante())
+                if (listaCase[3].GetCaseOcupadoJogador() == false && listaCase[3].GetCaseOcupadoOponente() == false && listaCase[3].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[5].GetIDCartaOcupante())
                 {
-                    _carta.transform.SetParent(listaCase[3].gameObject.transform, false);
-                    _carta.transform.localPosition = Vector3.zero;
+                    MoverCarta(_carta, listaCase[3]);
+                }
+                else
+                {
+                    Debug.Log($"{_carta.gameObject} não pode se mover!");
+                }
 
-                    _carta.SetMoveuSe(true);
+                break;
 
-                    Debug.Log($"{_carta.gameObject.name} se moveu para {listaCase[3].GetPosicaoCasa()}");
+            //SE ESTIVER NA CASA 4, A CARTA PODE SE MOVER ATÉ A CASA 2
+
+            case 4:
+
+                if (listaCase[2].GetCaseOcupadoJogador() == false && listaCase[2].GetCaseOcupadoOponente() == false && listaCase[2].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[4].GetIDCartaOcupante())
+                {
+                    MoverCarta(_carta, listaCase[2]);
+                }
+                else
+                {
+                    Debug.Log($"{_carta.gameObject} não pode se mover!");
+                }
+
+                break;
+
+            //SE ESTIVER NA CASA 3, A CARTA PODE SE MOVER ATÉ A CASA 1
+
+            case 3:
+
+                if (listaCase[1].GetCaseOcupadoJogador() == false && listaCase[1].GetCaseOcupadoOponente() == false && listaCase[1].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[3].GetIDCartaOcupante())
+                {
+                    MoverCarta(_carta, listaCase[1]);
+                }
+                else
+                {
+                    Debug.Log($"{_carta.gameObject} não pode se mover!");
+                }
+                break;
+
+            //SE ESTIVER NA CASA 2, A CARTA PODE SE MOVER ATÉ A CASA 0
+
+            case 2:
+
+                if (listaCase[0].GetCaseOcupadoJogador() == false && listaCase[0].GetCaseOcupadoOponente() == false && listaCase[0].GetIDCartaOcupante() == -1 && _carta.dados.ID == listaCase[2].GetIDCartaOcupante())
+                {
+                    MoverCarta(_carta, listaCase[0]);
                 }
                 else
                 {
@@ -315,6 +257,32 @@ public class IA_MapeamentoDeCases : MonoBehaviour
                 break;
         }
     }
+
+    public void MoverCarta(CartaDaCena carta, Casa destino, bool ataque = false)
+    {
+        Casa origem = listaCase.Find(c => c.GetIDCartaOcupante() == carta.dados.ID);
+
+        if (origem == null)
+        {
+            Debug.LogError($"Não encontrei a casa da carta {carta.dados.ID}");
+            return;
+        }
+
+        /*
+        // Limpa a casa antiga
+        origem.SetIDCartaOcupante(-1);
+        origem.SetCaseOcupadoOponente(false);
+
+        // Atualiza a nova
+        destino.SetIDCartaOcupante(carta.dados.ID);
+        destino.SetCaseOcupadoOponente(true);
+        */
+
+        origem.CartaEntra(carta, destino.transform);
+
+        Debug.Log($"Carta {carta.dados.ID} saiu da casa {origem.GetPosicaoCasa()} e foi para {destino.GetPosicaoCasa()}");
+    }
+
     public void AtaquesPossiveis(int _possicaoCase, CartaDaCena _carta)
     {
         switch (_possicaoCase)
@@ -324,7 +292,8 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[11].GetCaseOcupadoOponente() == false && listaCase[11].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[13].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque(_carta, listaCase[11]);
+
+                    MoverCarta(_carta, listaCase[11], true);
                 }
 
                 break;
@@ -334,7 +303,8 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[10].GetCaseOcupadoOponente() == false && listaCase[10].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[12].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque(_carta, listaCase[10]);
+
+                    MoverCarta(_carta, listaCase[10], true);
                 }
 
                 break;
@@ -343,7 +313,8 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[9].GetCaseOcupadoOponente() == false && listaCase[9].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[11].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque(_carta, listaCase[9]);
+
+                    MoverCarta(_carta, listaCase[9], true);
                 }
 
                 break;
@@ -353,18 +324,20 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[8].GetCaseOcupadoOponente() == false && listaCase[8].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[10].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque(_carta, listaCase[8]);
+
+                    MoverCarta(_carta, listaCase[8], true);
                 }
-               
+
                 break;
             //SE ESTOU NA CASA (8) E HÁ CARTA DO JOGADOR NA CASA (6), ENTÃO PODE ATACAR.
             case 8:
 
                 if (listaCase[6].GetCaseOcupadoOponente() == false && listaCase[6].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[8].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque(_carta, listaCase[6]);
+
+                    MoverCarta(_carta, listaCase[6], true);
                 }
-                
+
 
                 break;
 
@@ -373,36 +346,11 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[7].GetCaseOcupadoOponente() == false && listaCase[7].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[9].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque(_carta, listaCase[7]);
+
+                    MoverCarta(_carta, listaCase[7], true);
                 }
-                
+
                 break;
-
-            //SE ESTOU NA CASA (0)
-            //ULTIMA CASA
-
-            //case 0:
-
-                //if (listaCase[2].GetCaseOcupadoOponente() == false && listaCase[2].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[0].GetIDCartaOcupante())
-                //{
-                   //ai_Oponente.Ataque();
-                //}
-               
-
-                //break;
-
-            //SE ESTOU NA CASA (1)
-            //ULTIMA CASA
-
-            //case 1:
-
-                //if (listaCase[3].GetCaseOcupadoOponente() == false && listaCase[3].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[1].GetIDCartaOcupante())
-                //{
-                    //ai_Oponente.Ataque();
-                //}
-                
-
-                //break;
 
             //SE ESTOU NA CASA (2) E HÁ CARTA DO JOGADOR NA CASA (0), ENTÃO PODE ATACAR.
             case 2:
@@ -410,9 +358,10 @@ public class IA_MapeamentoDeCases : MonoBehaviour
                 if (listaCase[0].GetCaseOcupadoOponente() == false && listaCase[0].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[2].GetIDCartaOcupante())
                 {
 
-                    ai_Oponente.Ataque(_carta, listaCase[0]);
+
+                    MoverCarta(_carta, listaCase[0], true);
                 }
-               
+
 
                 break;
 
@@ -421,9 +370,10 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[1].GetCaseOcupadoOponente() == false && listaCase[1].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[3].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque(_carta, listaCase[1]);
+
+                    MoverCarta(_carta, listaCase[1], true);
                 }
-                
+
 
                 break;
             //SE ESTOU NA CASA (4) E HÁ CARTA DO JOGADOR NA CASA (2), ENTÃO PODE ATACAR.
@@ -432,9 +382,9 @@ public class IA_MapeamentoDeCases : MonoBehaviour
                 if (listaCase[2].GetCaseOcupadoOponente() == false && listaCase[2].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[4].GetIDCartaOcupante())
                 {
 
-                    ai_Oponente.Ataque(_carta, listaCase[2]);
+                    MoverCarta(_carta, listaCase[2], true);
                 }
-                
+
 
                 break;
 
@@ -443,9 +393,34 @@ public class IA_MapeamentoDeCases : MonoBehaviour
 
                 if (listaCase[3].GetCaseOcupadoOponente() == false && listaCase[3].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[5].GetIDCartaOcupante())
                 {
-                    ai_Oponente.Ataque(_carta, listaCase[3]);
+
+                    MoverCarta(_carta, listaCase[3], true);
                 }
-                
+
+
+                break;
+
+            //SE ESTOU NA CASA (6) E HÁ CARTA DO JOGADOR NA CASA (4), ENTÃO PODE ATACAR.
+            case 6:
+
+                if (listaCase[4].GetCaseOcupadoOponente() == false && listaCase[4].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[6].GetIDCartaOcupante())
+                {
+
+                    MoverCarta(_carta, listaCase[4], true);
+                }
+
+
+                break;
+
+            //SE ESTOU NA CASA (7) E HÁ CARTA DO JOGADOR NA CASA (5), ENTÃO PODE ATACAR.
+            case 7:
+
+                if (listaCase[5].GetCaseOcupadoOponente() == false && listaCase[5].GetCaseOcupadoJogador() == true && _carta.GetMoveuSe() == false && _carta.dados.ID == listaCase[7].GetIDCartaOcupante())
+                {
+
+                    MoverCarta(_carta, listaCase[5], true);
+                }
+
 
                 break;
         }

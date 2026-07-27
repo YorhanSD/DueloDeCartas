@@ -1,28 +1,21 @@
 using System.Collections;
+using System.Security.Cryptography;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TrocaLugar : MonoBehaviour
 {
-    public IA_MapeamentoDeCases ia_MapeamentoDeCases;
-    public Trava_Casas travaCasas;
+    Casa casaRetaguarda = null;
+    Casa casaVanguarda = null;
 
-    private bool verificaSeSoltou;
+    public IA_MapeamentoDeCases ia_MapeamentoDeCases;
+    public EntraESaiCartas entraESaiCartas;
 
     [System.Obsolete]
     void Start()
     {
-        travaCasas = GetComponent<Trava_Casas>();
         ia_MapeamentoDeCases = GetComponent<IA_MapeamentoDeCases>();
-    }
-
-    public void SetVerificaSoltouCarta(bool _verificaSeSoltou)
-    {
-        verificaSeSoltou = _verificaSeSoltou;
-    }
-
-    public bool GetVerificaSoltou()
-    {
-        return verificaSeSoltou;
+        entraESaiCartas = GetComponent<EntraESaiCartas>();
     }
 
     public void VerificaPosicaoDasCartas(CartaDaCena _retaguarda, CartaDaCena _vanguarda)
@@ -30,51 +23,42 @@ public class TrocaLugar : MonoBehaviour
         Debug.Log($"A carta de retaguarda é : {_retaguarda.dados.nome}");
         Debug.Log($"A carta da vanguarda é : {_vanguarda.dados.nome}");
 
-        if (GetVerificaSoltou() == true)
+        if (entraESaiCartas.GetEncostouEmOutraCarta() == true && _retaguarda.GetEstaAtivada() == true)
         {
-            foreach (Case casa in ia_MapeamentoDeCases.listaCase)
+            foreach (Casa casa in ia_MapeamentoDeCases.listaCase)
             {
-                if (casa.GetIDCartaOcupante() == _vanguarda.dados.ID && _vanguarda.GetEstaAtivada() == true)
-                {
-                    _vanguarda.transform.SetParent(_retaguarda.gameObject.transform, false);
-                    _vanguarda.transform.localPosition = Vector3.zero;
+                if (casa.GetIDCartaOcupante() == _retaguarda.dados.ID)
+                    casaRetaguarda = casa;
 
-                    _retaguarda.transform.SetParent(casa.gameObject.transform, false);
-                    _retaguarda.transform.localPosition = Vector3.zero;
-
-                    StartCoroutine(aguardaMovimento(casa, _retaguarda, _vanguarda));
-
-                    break;
-                }
+                if (casa.GetIDCartaOcupante() == _vanguarda.dados.ID)
+                    casaVanguarda = casa;
             }
+
+            if (casaRetaguarda == null || casaVanguarda == null)
+                return;
+
+            //casaVanguarda.CartaSai(_vanguarda);
+
+            casaVanguarda.CartaEntra(_retaguarda, casaVanguarda.transform);
+
+            //casaRetaguarda.CartaSai(_retaguarda);
+
+            casaRetaguarda.CartaEntra(_vanguarda, casaRetaguarda.transform);
+
+            entraESaiCartas.SetEncostouEmOutraCarta(false);
+
+            //_retaguarda.transform.SetParent(casaVanguarda.transform, false);
+            //_retaguarda.transform.localPosition = Vector3.zero;
+
+            //_vanguarda.transform.SetParent(casaRetaguarda.transform, false);
+            //_vanguarda.transform.localPosition = Vector3.zero;
+
+            //casaRetaguarda.SetCartaOcupante(_vanguarda);
+            //casaRetaguarda.SetIDCartaOcupante(_vanguarda.dados.ID);
+
+            //casaVanguarda.SetCartaOcupante(_retaguarda);
+            //casaVanguarda.SetIDCartaOcupante(_retaguarda.dados.ID);
+
         }
-    }
-
-    public IEnumerator aguardaMovimento(Case casa, CartaDaCena _retaguarda, CartaDaCena _vanguarda)
-    {
-        yield return new WaitForSeconds(0.1f);
-
-        //casa.OcuparCasa(_retaguarda);
-
-        foreach (Case _casa in ia_MapeamentoDeCases.listaCase)
-        {
-            if (_casa.GetIDCartaOcupante() == _vanguarda.dados.ID) // Pega a posição da carta que estava no lugar
-            {
-                travaCasas.BloqueiaCasas(_casa.GetPosicaoCasa());
-            }
-        }
-
-        //travaCasas.BloqueiaCasas(casa.GetPosicaoCasa());
-
-        //travaCasas.BloqueiaCasas(casa.GetPosicaoCasa());
-
-        //break;
-        //}
-        //}
-
-        //yield return new WaitForSeconds(0.4f);
-
-        //_vanguarda.SetMoveuSe(false);
-        //_vanguarda.SetPodeAtacar(true);
     }
 }

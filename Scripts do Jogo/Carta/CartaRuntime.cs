@@ -15,6 +15,7 @@ public class CartaRuntime
     public int reacao;
     public int lucidez;
 
+    public CartaDaCena cartaCena;
     public CartaOriginal cartaOriginal;
     public UICard uiCard;
 
